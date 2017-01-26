@@ -1,8 +1,8 @@
 /*********************************************************************
-Onur Berk Töre
+Onur Berk TÃ¶re
 Yeditepe University, RIS Lab
 
-Master-Slave relationship between two devices. 
+Master-Slave relationship between two haptic devices. 
 **********************************************************************/
 
 #include <stdio.h>
