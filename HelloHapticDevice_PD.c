@@ -26,22 +26,7 @@ HDCallbackCode HDCALLBACK closedLoopControllerCallback(void *data);
 
 long int runs = 0;			// number of servo ticks
 
-// initial position 
-// TODO: input from user
-double initX = -15; 
-double initY = -40;
-double initZ = -40;
 
-// goalposition
-// TODO: input from user
-double goalX = 0; 
-double goalY = -15;
-double goalZ = 15;
-
-
-double errTotalX = 0;
-double errTotalY = 0;
-double errTotalZ = 0;
 
 
 // desired position to reach
