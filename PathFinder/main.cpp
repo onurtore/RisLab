@@ -1,5 +1,5 @@
 /**********************************************************************
-Onur Berk Töre
+Onur Berk TÃ¶re
 Yeditepe University, RIS Lab
 
 
@@ -19,10 +19,10 @@ int main(){
 
 	wheretoGo myClass;
 	myClass.calculateWavefront();
-	myClass.pathImprove();
+	//myClass.pathImprove();
 
 	
-	myClass.calculatePath();
+	//myClass.calculatePath();
 	myClass.printMatrix();
 	
 	cout << "The End\n";
