@@ -19,10 +19,10 @@ int main(){
 
 	wheretoGo myClass;
 	myClass.calculateWavefront();
-	//myClass.pathImprove();
+	myClass.pathImprove();
 
 	
-	//myClass.calculatePath();
+	myClass.calculatePath();
 	myClass.printMatrix();
 	
 	cout << "The End\n";
