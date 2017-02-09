@@ -1,5 +1,5 @@
 /**********************************************************************
-Onur Berk T�re
+Onur Berk Töre
 Yeditepe University, RIS Lab
 
 Potantial Field Method for point, in 2D Environment, with wavefront algorithm
@@ -44,8 +44,8 @@ wheretoGo::wheretoGo(){
 	repulsiveConstant = 75.0f;
 	distanceOfInfluence = 300.0f;
 	
-	matrixHeight = 100;
-	matrixWidth = 100;
+	matrixHeight = 81;
+	matrixWidth = 81;
 
 	targetRadius = 1.5;
 	 
@@ -64,41 +64,35 @@ wheretoGo::wheretoGo(){
 	pointvely = 0 ;
 
 	
-	addStartPoint(5, 5);
+	addStartPoint(42, 15);
 	
 	
-	addBarrier(15, 25);
-	addBarrier(16, 26);
-	addBarrier(17, 27);
-	addBarrier(18, 28);
-	addBarrier(19, 29);
+	/*Constructing the scenerio for game*/	
+	//Left-Down
+	for (int i = matrixHeight-27; i < matrixHeight; i++) {
+		for (int j = 0; j < 27; j++) {
+			addBarrier(i, j);
+		}
+		
+	}
+	//Left-Up
+	for (int i = 0; i < 27; i++) {
+		for (int j = 0; j < 27; j++) {
+			addBarrier(i, j);
+		}
+	}
 
-	
-
-	addBarrier(20, 30);
-	addBarrier(21, 29);
-	addBarrier(22, 28);
-	addBarrier(23, 27);
-	addBarrier(24, 26);
-	addBarrier(25, 25);
-	addBarrier(26, 24);
-	addBarrier(27, 23);
-	addBarrier(28, 22);
-	addBarrier(29, 21);
-	addBarrier(30, 20);
-
-	addBarrier(29, 19);
-	addBarrier(28, 18);
-	addBarrier(27, 17);
-	addBarrier(26, 16);
-	addBarrier(25, 15);
-
-
-
-
+	//Right-Center
+	for (int i = 27; i < 54; i++) {
+		for (int j = 54; j < matrixWidth; j++) {
+			addBarrier(i, j);
+		}
+	}
+	/*Constructing the scenerio for game*/
 	
 	
-	addTargetPoint(90,90);
+	
+	addTargetPoint(15, 66);
 
 	//add4Wall();
 
@@ -185,16 +179,15 @@ void wheretoGo::addTargetPoint(int x, int y){
 
 void wheretoGo::addBarrier(int x, int y) {
 
-	/** Onceki hali
 	barriersX.push_back(x);
 	barriersY.push_back(y);
 
 
 	pathMatrix[x][y].at(0) = 1;
-	*/
+	
 
-
-	//4 l� ekle
+	/*
+	//4 lü ekle
 	for (int k = 0; k < neighborhood.size(); k++) {
 
 		//cout << neighborhood.at(k).first << " " << neighborhood.at(k).second << "\n";
@@ -214,6 +207,8 @@ void wheretoGo::addBarrier(int x, int y) {
 
 
 	}
+
+	*/
 
 }
 
@@ -448,7 +443,7 @@ void wheretoGo::calculateWavefront() {
 		}
 	}
 
-/*
+	//En son üzerinden bir daha geçiyor //En temizi ?? 
 	for (int i = 0; i < matrixHeight; i++) {
 		for (int j = 0; j < matrixWidth; j++) {
 			if (pathMatrix[i][j].at(0) != 1){
@@ -456,7 +451,7 @@ void wheretoGo::calculateWavefront() {
 			}
 		}
 	}
-*/
+
 	calculateWavefrontPath();
 	
 
@@ -468,21 +463,25 @@ void wheretoGo::calculateWavefront() {
 void wheretoGo::calculateWavefrontPath() {
 	
 	
-	
+	cout << "hello" ;
+
 	double i = pointx;
 	double j = pointy;
-	
 
-	while ( i != targetx  || j !=  targety) {
-		
+	
+	//add some target Radius 
+	int targetRadius = 3;
+	while(! ( ( (i > targetx - targetRadius) &&  (i < targetx + targetRadius) ) && ( (j > targety - targetRadius) && (j < targety + targetRadius) )  ) ){
+	//Without target radius
+	//while ( i != targetx  || j !=  targety) {
+		cout << i << " " << j << "\n";
 		vector<double> xy = findMinPath(i,j);
 		i = xy.at(0);
 		j = xy.at(1);
 
 			targetsX.push_back(i);
 			targetsY.push_back(j);
-		
-		
+			
 	}
 	
 	
@@ -491,8 +490,94 @@ void wheretoGo::calculateWavefrontPath() {
 	}
 	myfile4.close();
 	targetCounter = targetsX.size();
+	 
+
 	
-	
+}
+
+
+//For find the minimum effor path
+vector<double> wheretoGo::findMinPath(int x, int y) {
+
+	int globalMin = 9999999;
+	vector<double> newxy(2);
+	int i;
+	int j;
+	for (int k = 0; k < neighborhood.size(); k++) {
+
+
+		i = x + neighborhood.at(k).first;
+
+		j = y + neighborhood.at(k).second;
+
+		if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
+
+			if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
+				int min = pathMatrix[i][j].at(0);
+				if (min < globalMin) {
+					globalMin = min;
+					newxy.at(0) = i;
+					newxy.at(1) = j;
+				}
+			}
+
+		}
+	}
+
+	//Always choose the corners, if there is a minima
+
+	i = x + neighborhood.at(0).first;
+	j = y + neighborhood.at(0).second;
+	if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
+
+		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
+			if (globalMin == pathMatrix[i][j].at(0)) {
+				newxy.at(0) = i;
+				newxy.at(1) = j;
+			}
+		}
+	}
+
+	i = x + neighborhood.at(2).first;
+	j = y + neighborhood.at(2).second;
+	if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
+		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
+			if (globalMin == pathMatrix[i][j].at(0)) {
+				newxy.at(0) = i;
+				newxy.at(1) = j;
+			}
+		}
+	}
+
+	i = x + neighborhood.at(5).first;
+	j = y + neighborhood.at(5).second;
+	if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
+
+		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
+			if (globalMin == pathMatrix[i][j].at(0)) {
+				newxy.at(0) = i;
+				newxy.at(1) = j;
+			}
+		}
+	}
+
+
+	i = x + neighborhood.at(7).first;
+	j = y + neighborhood.at(7).second;
+	if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
+
+		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
+			if (globalMin == pathMatrix[i][j].at(0)) {
+				newxy.at(0) = i;
+				newxy.at(1) = j;
+			}
+		}
+	}
+
+
+
+
+	return newxy;
 }
 
 void wheretoGo::pathImprove() {
@@ -620,78 +705,7 @@ void wheretoGo::findSlope() {
 
 }
 
-//For find the minimum effor path
-vector<double> wheretoGo::findMinPath(int x, int y) {
-	
-	int globalMin = 99;
-	vector<double> newxy(2);
-	int i;
-	int j;
-	for (int k = 0; k < neighborhood.size(); k++) {
 
-
-		 i = x + neighborhood.at(k).first;
-
-		 j = y + neighborhood.at(k).second;
-
-		if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
-
-			if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
-				int min = pathMatrix[i][j].at(0);
-				if (min < globalMin) {
-					globalMin = min;
-					newxy.at(0) = i;
-					newxy.at(1) = j;
-				}
-			}
-
-		}
-	}
-		
-	//Always choose the corners, if there is a minima
-
-		 i = x + neighborhood.at(0).first;
-		 j = y + neighborhood.at(0).second;
-		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
-			if (globalMin == pathMatrix[i][j].at(0)) {
-				newxy.at(0) = i;
-				newxy.at(1) = j;
-			}
-		}
-
-		 i = x + neighborhood.at(2).first;
-		 j = y + neighborhood.at(2).second;
-		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
-			if (globalMin == pathMatrix[i][j].at(0)) {
-				newxy.at(0) = i;
-				newxy.at(1) = j;
-			}
-		}
-
-		 i = x + neighborhood.at(5).first;
-		 j = y + neighborhood.at(5).second;
-		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
-			if (globalMin == pathMatrix[i][j].at(0)) {
-				newxy.at(0) = i;
-				newxy.at(1) = j;
-			}
-		}
-
-		 i = x + neighborhood.at(7).first;
-		 j = y + neighborhood.at(7).second;
-		if (pathMatrix[i][j].at(0) != 0 && pathMatrix[i][j].at(0) != 1) {
-			if (globalMin == pathMatrix[i][j].at(0)) {
-				newxy.at(0) = i;
-				newxy.at(1) = j;
-			}
-		}
-
-	
-
-
-	
-	return newxy;
-}
 
 
 void wheretoGo::printMatrix(){
