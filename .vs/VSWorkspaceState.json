@@ -1,10 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\BaseChange",
-    "\\deney kodu",
-    "\\Game"
+    "\\MAZE - Copy",
+    "\\MAZE - Copy\\server",
+    "\\MAZE - Copy\\server\\deney kodu",
+    "\\MAZE - Copy\\server\\deney kodu\\MazeGame"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\MAZE - Copy\\server\\deney kodu\\MazeGame\\Graphics.cpp",
   "PreviewInSolutionExplorer": false
 }

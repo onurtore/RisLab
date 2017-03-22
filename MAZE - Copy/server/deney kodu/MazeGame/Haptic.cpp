@@ -2675,7 +2675,10 @@ Vector calcBallPos()
 	Algorithm_force.at(2) = 0.8 * (look_ahead_pos_z - res_z);
 
 
+	//Algorithm_force.at(0)  = kpHN*(cpX - hcpX);
 
+
+	
 
 
 
