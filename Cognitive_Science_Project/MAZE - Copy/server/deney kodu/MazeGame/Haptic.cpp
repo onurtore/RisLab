@@ -21,9 +21,7 @@ Date: Jul. 22, 2013
 #include "SoundPlayerThread.h"
 
 
-//Onur
-#include "baseChange.h" //Base Change for 2D coordinate systems
-#include "wheretoGo.h" // Path Finder Algorithm ( WaweFront + Potantiel Field) 
+//Onur 
 #include <vector>
 #include "public2.h"
 
@@ -67,9 +65,6 @@ double errTotalZ = 0;
 double dx;
 double dy;
 double dz;
-double OnurRuns = 0;
-
-hduVector3Dd Onurforce;
 
 
 
@@ -82,8 +77,7 @@ hduVector3Dd Onurforce;
 #define COLLISION_RIGHT	11
 #define COLLISION_LEFT	12
 
-//Onur 
-int  kalamar = 0;
+
 
 // EXTERNED VARIABLES
 extern HapticCallBack *effect;
@@ -99,7 +93,6 @@ extern void setTrialText(int trialNum);
 extern float ballRadius;
 //Onur
 extern vector<double> hapticForce;
-extern wheretoGo path;
 
 
 Vector boundary;
@@ -2500,220 +2493,22 @@ Vector calcBallPos()
 
 
 	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
-	/*Ýlk yöntem
-		(if (OnurRuns == 1) {
-		error1x = 0;
-		error1x = 0;
-		error1y = 0;
-		error1z = 0;
-
-		error2x = 0;
-		error2y = 0;
-		error2z = 0;
-
-		double Xsrc_max = 82;	//Onur Code x axis max up-down
-		double Xsrc_min = 0;	//Onur Code x axis min up-down
-		double Ysrc_max = 200;	//Onur Code y axis max left-right
-		double Ysrc_min = 0;	//Onur Code y axis min left-right
-
-
-
-		double Xres_min = -100; //MazeGame x axis min left-right
-		double Xres_max = +100;	//MazeGame x axis max left-right
-		double Zres_min = -41;	//MazeGame z axis min up-down
-		double Zres_max = +41;	//MazeGame z axis max up-down
-
-
-
-		double res_z = ((path.dtargetsX.at(path.dtargetsX.size() - 1) - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-		double res_x = ((path.dtargetsY.at(path.dtargetsY.size() - 1) - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
-
-
-
-		initX = res_x;
-		initY = 0;
-		initZ = res_z;
-
-		dx = (initX - hcpX) / (10000);
-		dy = (initY - hcpY) / (10000);
-		dz = (initZ - hcpZ) / (10000);
-
-		desiredX = hcpX;
-		desiredY = hcpY;
-		desiredZ = hcpZ;
-	}
-
-	error1x = error2x;
-	error1y = error2y;
-	error1z = error2z;
-
-	desiredX += dx;
-	desiredY += dy;
-	desiredZ += dz;
-
-	error2x = desiredX - hcpX;
-	error2y = desiredY - hcpY;
-	error2z = desiredZ - hcpZ;
-
-
-	Algorithm_force[0] = kpHN * error2x + kdN * (error2x - error1x);
-	Algorithm_force[1] = 0;
-	Algorithm_force[2] = kpHN * error2z + kdN * (error2z - error1z);
-
-
-	*/
-
-	//Onur
-	//Dont even think about to change without saving somewhere 
-	//Code work right,2 times checked
-	//Dönüþüm Maze Gameden onurun koda
-	/*
-	double Xsrc_min = -100; // MazeGame x axis min left-right
-	double Xsrc_max = +100;	// MazeGame x axis max left-right
-	double Zsrc_min = -41;	// MazeGame z axis min up-down
-	double Zsrc_max = +41;	// MazeGame z axis max up-down
-
-
-
-	double Xres_max = 82;	// Onur Code x axis max up-down
-	double Xres_min = 0;	// Onur Code x axis min up-down
-	double Yres_max = 200;	// Onur Code y axis max left-right
-	double Yres_min = 0;	// Onur Code y axis min left-right
-
-
-
-
-	double res_x = ((hcpZ)-Zsrc_min) / (Zsrc_max - Zsrc_min) * (Xres_max - Xres_min) + Xres_min;
-	double res_y = ((hcpX)-Xsrc_min) / (Xsrc_max - Xsrc_min) * (Yres_max - Yres_min) + Yres_min;
-	*/
-
-	//Onurun koddan maze game'e
-
-
-	/*Çalýþmýyor bütün yol için
-	double Xsrc_max = 82;	//Onur Code x axis max up-down
-	double Xsrc_min = 0;	//Onur Code x axis min up-down
-	double Ysrc_max = 200;	//Onur Code y axis max left-right
-	double Ysrc_min = 0;	//Onur Code y axis min left-right
-
-
-
-	double Xres_min = -100; //MazeGame x axis min left-right
-	double Xres_max = +100;	//MazeGame x axis max left-right
-	double Zres_min = -41;	//MazeGame z axis min up-down
-	double Zres_max = +41;	//MazeGame z axis max up-down
-
-	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
-
-
-
-	/*Çalýþmýyor bütün yol için
-	double euclidean_distance = 999999999;
-	double x_ref = 999999999;
-	double res_z;
-	double res_x;
-	double min_res_z;
-	double min_res_x;
-	int j = 0;
-
-	for (int i = 0; i < path.dtargetsX.size(); i++) {
-		if (path.isVisited.at(i) == true) {
-			continue;
-		}
-		res_z = (	(path.dtargetsX.at(i)	-Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-		res_x = (	(path.dtargetsY.at(i)	-Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
-
-		euclidean_distance = sqrt(pow((look_ahead_pos_x - res_x), 2) + pow((look_ahead_pos_z - res_z), 2));
-
-		if (euclidean_distance < 15) {
-			path.isVisited.at(i) = true;
-			continue;
-		}
-
-
-		if (euclidean_distance < x_ref) {
-
-			x_ref = euclidean_distance;
-			j = i;
-			min_res_x = res_x;
-			min_res_z = res_z;
-		}
-
-
-	}
-	*/
-
-	//Çalýþmýyor son hedef için
-
-	double Xsrc_max = 82;	//Onur Code x axis max up-down 
-	double Xsrc_min = 0;	//Onur Code x axis min up-down
-	double Ysrc_max = 200;	//Onur Code y axis max left-right
-	double Ysrc_min = 0;	//Onur Code y axis min left-right
-
-
-
-	double Xres_min = -100; //MazeGame x axis min left-right 
-	double Xres_max = +100;	//MazeGame x axis max left-right
-	double Zres_min = -41;	//MazeGame z axis min up-down
-	double Zres_max = +41;	//MazeGame z axis max up-down
-
-
-
-	double look_ahead_pos_x;
-	double look_ahead_pos_z;
-	double look_ahead_time = 0.001;
-
-
-	look_ahead_pos_x = hcpX + (look_ahead_time * hcvX);
-	look_ahead_pos_z = hcpZ + (look_ahead_time * hcvZ);
-
-
-	double res_z = ((path.dtargetsX.at(path.dtargetsX.size() - 1) - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-	double res_x = ((path.dtargetsY.at(path.dtargetsY.size() - 1) - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
-
-	Algorithm_force.at(0) = 0.8 * (look_ahead_pos_x - res_x);
-	Algorithm_force.at(2) = 0.8 * (look_ahead_pos_z - res_z);
-
-
-	//Algorithm_force.at(0)  = kpHN*(cpX - hcpX);
-
-
 	
 
 
 
 
+	
 
-	if (runs % 1000 == 0) {
-		cout << "hcX is:  " << hcpX << "\t hcvZ is: " << hcpZ << "\n";
-		cout << "res_x is:" << res_x << "\tres_z is:" << res_z << "\n";
-		//	cout << "res_x is: " << path.dtargetsX.at(j) << "res_z is: " << path.dtargetsY.at(j) << "\n";
-		cout << "algorithm bpx force is: " << Algorithm_force[0] << "algorithm bpz force is: " << Algorithm_force[2] << "\n\n\n";
-		//cout << "lefthaptic bpx force is: " << kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) << " left haptic bpz force is: "  << kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ) << "\n\n\n"; 
-	}
-
-	cpX = +(Algorithm_force.at(0) / kpHN) - hcpX;
-	cpZ = +(Algorithm_force.at(2) / kpHN) - hcpZ;
-
-
-	//Onur Left haptic working right haptic is my algorithm
 	forceBall[0] = kpHN*(hpX - hhpX) + kdN*(hvX - hhvX)
-		+  /*deviceden gelen force u 0 la yerine benim algorithmamýn ürettiði forcu koy*/ kpHN*(cpX - hcpX) + kdN*(cvX - hcvX) /*Algorithm_force.at(0)*/ + fcw[0] + boundaryforceCX;
+		+   kpHN*(cpX - hcpX) + kdN*(cvX - hcvX)  + fcw[0] + boundaryforceCX;
 
 	forceBall[2] = kpHN*(hpZ - hhpZ) + kdN*(hvZ - hhvZ)
-		+/*Onur Right(Device HHD2 ) deviceden gelen force u 0 la yerine benim algorithmamýn ürettiði forcu koy */ kpHN*(cpZ - hcpZ) + kdN*(cvZ - hcvZ) /*Algorithm_force.at(2)*/ + fcw[2] + boundaryforceCZ;
-	//Onur
+		+ kpHN*(cpZ - hcpZ) + kdN*(cvZ - hcvZ)  + fcw[2] + boundaryforceCZ;
+	
 
 
-	// Force'un eski hali
-	//forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
-	//+ kpHN*(cpX-hcpX) + kdN*(cvX-hcvX)+fcw[0] + boundaryforceCX;
-
-	//forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
-	//+kpHN*(cpZ-hcpZ) + kdN*(cvZ-hcvZ)+fcw[2] + boundaryforceCZ; 
-
-	//Onur
-
+	
 
 	fResistance[0] = fcw[0] + boundaryforceCX;
 	fResistance[2] = fcw[2] + boundaryforceCZ;

@@ -178,7 +178,6 @@
     <ClCompile Include="..\DataTransferSocket\Network\NetworkServices.cpp" />
     <ClCompile Include="..\DataTransferSocket\Server\ServerApp.cpp" />
     <ClCompile Include="..\DataTransferSocket\Server\ServerNetwork.cpp" />
-    <ClCompile Include="wheretoGo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -202,7 +201,6 @@
     <ClInclude Include="..\DataTransferSocket\Network\NetworkServices.h" />
     <ClInclude Include="..\DataTransferSocket\Server\ServerApp.h" />
     <ClInclude Include="..\DataTransferSocket\Server\ServerNetwork.h" />
-    <ClInclude Include="wheretoGo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

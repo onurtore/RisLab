@@ -67,9 +67,6 @@
     <ClCompile Include="baseChange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wheretoGo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h">
@@ -130,9 +127,6 @@
       <Filter>Server\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="baseChange.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wheretoGo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Public2.h">
