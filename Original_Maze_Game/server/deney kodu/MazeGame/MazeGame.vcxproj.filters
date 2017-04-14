@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{f218519d-2784-4b87-80bb-eb497a562fa7}</UniqueIdentifier>
+      <Extensions>c;cpp</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{fa2b1f72-808e-41c9-9083-d2dfa6bce98a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{bb076705-809a-4f94-b4c7-0c5122923558}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Header Files">
+      <UniqueIdentifier>{4545091a-1e2d-497b-aec3-d4c166f6eb9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Source Files">
+      <UniqueIdentifier>{e5e2dd10-8eb3-4033-a450-33b814e0de22}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Ball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BallGr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardGraphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataRecord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="force_vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Haptic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HapticInterfacePoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HIPgraphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Spring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataTransferSocket\Network\NetworkServices.cpp">
+      <Filter>Server\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataTransferSocket\Server\ServerApp.cpp">
+      <Filter>Server\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataTransferSocket\Server\ServerNetwork.cpp">
+      <Filter>Server\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ball.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BallGr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BgTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoardGraphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataRecord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="force_vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HapticCallBack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HapticInterfacePoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HIPgraphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathCB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Public.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundPlayerThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataTransferSocket\Network\NetworkData.h">
+      <Filter>Server\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataTransferSocket\Network\NetworkServices.h">
+      <Filter>Server\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataTransferSocket\Server\ServerApp.h">
+      <Filter>Server\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataTransferSocket\Server\ServerNetwork.h">
+      <Filter>Server\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
