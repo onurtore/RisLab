@@ -153,6 +153,7 @@ extern HDdouble *aMotorTemp = 0;
 //These are must be global Onur? 
 //YES THESE ARE MUST BE GLOBAL
 wheretoGo path;
+
 vector<double> hapticForce;
 bool firstTime = true;
 //These are must be global ?? 
@@ -164,6 +165,10 @@ GraphicsController *graphCtrller;
 //GameController *gameCtrller;
 HHOOK hMessageBoxHook_;
 static int messageBoxCounter = 0;
+
+
+vector<  vector< float  > > lineEquations;
+
 
 // callback for hooking unwanted coin error message boxes
 LRESULT CALLBACK CbtHookProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -211,6 +216,32 @@ cond = 3 -> single blind condition agent 1 is given goals
 cond = 4 -> single blind condition agent 2 is given goals
 cond = 5 -> harmonious operation
 */
+
+
+void createLine(int x1, int y1,int x2, int y2) {
+
+	vector<float> lineEq;
+
+	float slope = (y2 - y1) / (x2 - x1);
+
+	//y2 = slope * x2 + b
+	
+	//y2 - (slope * x2) = b
+
+	float b = y2 - (slope * x2);
+
+	lineEq.push_back(y2);
+	lineEq.push_back(slope);
+	lineEq.push_back(b);
+
+
+	lineEquations.push_back(lineEq);
+
+
+
+	return;
+}
+
 int main(int argc, char **argv)
 {
 
@@ -229,6 +260,10 @@ int main(int argc, char **argv)
 	cout << "Sixth Step Done - Path Selected" << "\n\n";
 	for (int i = 0; i <  path.dtargetsX.size(); i++) {
 		path.isVisited.push_back(false);
+	}
+	
+	for (int i = 0; i+1 < path.dtargetsX.size(); i++) {
+		createLine(path.dtargetsX.at(i),path.dtargetsY.at(i), path.dtargetsX.at(i+1), path.dtargetsY.at(i+1)),;
 	}
 
 //Onur
