@@ -220,7 +220,7 @@ void wheretoGo::AddPotentialField() {
 
 float wheretoGo::repelForce(double x, double y) {
 
-	float repelForce;
+	float repelForce = 0;
 
 	for (unsigned int i = 0; i < barriersX.size(); i++) {
 		double euclidean_distance = sqrt(pow(x - barriersX.at(i), 2) + pow(y - barriersY.at(i), 2));
@@ -1030,12 +1030,12 @@ void wheretoGo::AddPotantielField(){
 
 }*/
 
-void wheretoGo::fAtt(double x, double y) {
+/*void wheretoGo::fAtt(double x, double y) {
 
 	fattx = -1.0f * attractiveConstant * (x - targetx);
 	fatty = -1.0f * attractiveConstant * (y - targety);
 }
-
+*/
 
 
 

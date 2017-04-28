@@ -125,7 +125,7 @@ void displayFunction(void)
 /*******************************************************************************
  Called periodically by the GLUT framework.
 *******************************************************************************/
-void handleIdle(void)
+/*void handleIdle(void)
 {
     glutPostRedisplay();
 
@@ -136,12 +136,12 @@ void handleIdle(void)
         getchar();
         exit(-1);
     }
-}
+}*/
 
 /******************************************************************************
  Popup menu handler
 ******************************************************************************/
-void handleMenu(int ID)
+/*void handleMenu(int ID)
 {
     switch(ID) 
     {
@@ -152,13 +152,13 @@ void handleMenu(int ID)
             charge *= -1;
             break;
     }
-}
+} */
 
 
 /*******************************************************************************
  Given the position is space, calculates the (modified) coulomb force.
 *******************************************************************************/
-hduVector3Dd forceField(hduVector3Dd pos)
+/*hduVector3Dd forceField(hduVector3Dd pos)
 {
     double dist = pos.magnitude();
     
@@ -177,12 +177,12 @@ hduVector3Dd forceField(hduVector3Dd pos)
     }
     forceVec *= charge;
     return forceVec;
-}
+}*/
 
 /*******************************************************************************
  Main callback that calculates and sets the force.
 *******************************************************************************/
-HDCallbackCode HDCALLBACK CoulombCallback(void *data)
+/*HDCallbackCode HDCALLBACK CoulombCallback(void *data)
 {
     HHD hHD = hdGetCurrentDevice();
 
@@ -208,11 +208,11 @@ HDCallbackCode HDCALLBACK CoulombCallback(void *data)
 
     return HD_CALLBACK_CONTINUE;
 }
-
+*/
 /*******************************************************************************
  Schedules the coulomb force callback.
 *******************************************************************************/
-void CoulombForceField()
+/*void CoulombForceField()
 {
     gSchedulerCallback = hdScheduleAsynchronous(
         CoulombCallback, 0, HD_DEFAULT_SCHEDULER_PRIORITY);
@@ -229,12 +229,12 @@ void CoulombForceField()
 
     glutMainLoop(); // Enter GLUT main loop.
 }
-
+ */
 /******************************************************************************
  This handler gets called when the process is exiting. Ensures that HDAPI is
  properly shutdown
 ******************************************************************************/
-void exitHandler()
+/*void exitHandler()
 {
     hdStopScheduler();
     hdUnschedule(gSchedulerCallback);
@@ -244,7 +244,7 @@ void exitHandler()
         hdDisableDevice(ghHD);
         ghHD = HD_INVALID_HANDLE;
     }
-}
+}*/
 
 /******************************************************************************
  Main function.
