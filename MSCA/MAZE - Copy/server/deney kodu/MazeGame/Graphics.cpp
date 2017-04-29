@@ -166,7 +166,7 @@ GraphicsController *graphCtrller;
 HHOOK hMessageBoxHook_;
 static int messageBoxCounter = 0;
 
-
+//Onur
 vector<  vector< float  > > lineEquations;
 
 

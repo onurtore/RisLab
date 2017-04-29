@@ -100,8 +100,8 @@ extern float ballRadius;
 //Onur
 extern vector<double> hapticForce;
 extern wheretoGo path;
-
-
+extern vector<  vector< float  > > lineEquations;
+vector<  vector< float  > > closestLinePoint(int x, int y);
 Vector boundary;
 float boundaryThickness;
 static HDdouble *gServoMotorTemp = 0;
@@ -4035,3 +4035,101 @@ void serverLoop(void * arg)
 //
 //return nonCollidingBallPos;
 //}
+
+pair<int,int> closestLinePoint(int point_x, int point_y) {
+
+	
+	float y;
+	float m;
+	float b;
+
+
+	float perpendicular_y;
+	float perpendicular_m;
+	float perpendicular_b;
+
+
+	vector< vector<float> > perpendicularLines;
+	vector<float>			perpendicularLine;
+
+	for (int i = 0; i < lineEquations.size(); i++) {
+		
+		perpendicularLine.clear();
+
+		y = lineEquations.at(i).at(0);
+		m = lineEquations.at(i).at(1);
+		b = lineEquations.at(i).at(2);
+
+		perpendicular_m = -1 / m;
+		perpendicular_y = point_y;
+	//	y = reciprocals_m * x + b
+
+		perpendicular_b = perpendicular_y - (perpendicular_m * point_x);
+
+		perpendicularLine.push_back(perpendicular_y);
+		perpendicularLine.push_back(perpendicular_m);
+		perpendicularLine.push_back(perpendicular_b);
+
+		perpendicularLines.push_back(perpendicularLine);
+
+	}
+
+	float line1_y;
+	float line1_m;
+	float line1_b;
+
+	float line2_y;
+	float line2_m;
+	float line2_b;
+
+	float sum_b;
+	float sum_m;
+	
+	float x_point;
+	float y_point;
+
+	vector<vector<float> > linePoints;
+
+	for (int i = 0; i < lineEquations.size(); i++) {
+
+		line1_m = lineEquations.at(i).at(1);
+		line1_b = lineEquations.at(i).at(2);
+
+		line2_m = perpendicularLines.at(i).at(1);
+		line2_b = perpendicularLines.at(i).at(2);
+
+		sum_b = line1_b - line2_b;
+		sum_m = line1_m - line2_m;
+
+
+		x_point = sum_b / sum_m;
+
+		y_point = line1_m * x_point + line1_b;
+
+		linePoints.push_back(x_point);
+		linePoints.push_back(y_point);
+		
+	}
+
+	double euclidean_distance = 0;
+	double min_euclidean_distance = 999999999999;
+
+	std::pair <int, int> min;
+
+
+	for (int i = 0; i < linePoints.size(); i++) {
+
+		euclidean_distance = sqrt( (  (linePoints.at(i).at(0) - point_x) *(linePoints.at(i).at(0) - point_x) )  +  ( (linePoints.at(i).(1) - point_y) *(linePoints.at(i).(1) - point_y) )  );
+
+		if (min_euclidean_distance > euclidean_distance) {
+
+			min_euclidean_distance = euclidean_distance;
+
+			min = std::make_pair(linePoints.at(i).at(0),linePoints.at(i).at(1));
+		}
+		
+	}
+	return min;
+
+
+}
