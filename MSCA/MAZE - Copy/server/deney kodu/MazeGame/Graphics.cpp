@@ -222,7 +222,18 @@ void createLine(int x1, int y1,int x2, int y2) {
 
 	vector<float> lineEq;
 
-	float slope = (y2 - y1) / (x2 - x1);
+	float r;
+	if( x2 - x1 == 0 ){
+
+		r = 0.001;
+	}
+
+	else{
+
+		r = x2 - x1;
+	}
+
+	float slope = (y2 - y1) / (r);
 
 	//y2 = slope * x2 + b
 	
