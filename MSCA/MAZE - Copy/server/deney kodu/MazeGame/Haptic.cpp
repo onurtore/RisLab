@@ -102,7 +102,7 @@ extern vector<double> hapticForce;
 extern wheretoGo path;
 extern vector<  vector< float  > > lineEquations;
 
-//pair<int,int> closestLinePoint(int point_x, int point_y) ;
+std::pair<int,int> closestLinePoint(int point_x, int point_y);
 Vector boundary;
 float boundaryThickness;
 static HDdouble *gServoMotorTemp = 0;
@@ -4037,20 +4037,21 @@ void serverLoop(void * arg)
 //return nonCollidingBallPos;
 //}
 
-/*pair<int,int> closestLinePoint(int point_x, int point_y) {
+std::pair<int,int> closestLinePoint(int point_x, int point_y) {
 
 	
-	float y;
-	float m;
-	float b;
+	float y = 0;
+	float m = 0;
+	float b = 0;
 
 
-	float perpendicular_y;
-	float perpendicular_m;
-	float perpendicular_b;
+	float perpendicular_y = 0;
+	float perpendicular_m = 0;
+	float perpendicular_b = 0;
 
 
 	vector< vector<float> > perpendicularLines;
+	
 	vector<float>			perpendicularLine;
 
 	for (int i = 0; i < lineEquations.size(); i++) {
@@ -4063,7 +4064,8 @@ void serverLoop(void * arg)
 
 		perpendicular_m = -1 / m;
 		perpendicular_y = point_y;
-	//	y = reciprocals_m * x + b
+
+		//	y = reciprocals_m * x + b
 
 		perpendicular_b = perpendicular_y - (perpendicular_m * point_x);
 
@@ -4075,23 +4077,27 @@ void serverLoop(void * arg)
 
 	}
 
-	float line1_y;
-	float line1_m;
-	float line1_b;
+	float line1_y = 0;
+	float line1_m = 0;
+	float line1_b = 0;
 
-	float line2_y;
-	float line2_m;
-	float line2_b;
+	float line2_y = 0;
+	float line2_m = 0;
+	float line2_b = 0;
 
-	float sum_b;
-	float sum_m;
+	float sum_b = 0;
+	float sum_m = 0;
 	
-	float x_point;
-	float y_point;
+	float x_point = 0;
+	float y_point = 0;
 
 	vector<vector<float> > linePoints;
+	vector<float> linePoint;
 
 	for (int i = 0; i < lineEquations.size(); i++) {
+
+		linePoint.clear();
+
 
 		line1_m = lineEquations.at(i).at(1);
 		line1_b = lineEquations.at(i).at(2);
@@ -4099,7 +4105,7 @@ void serverLoop(void * arg)
 		line2_m = perpendicularLines.at(i).at(1);
 		line2_b = perpendicularLines.at(i).at(2);
 
-		sum_b = line1_b - line2_b;
+		sum_b = line2_b - line1_b;
 		sum_m = line1_m - line2_m;
 
 
@@ -4107,20 +4113,30 @@ void serverLoop(void * arg)
 
 		y_point = line1_m * x_point + line1_b;
 
-		linePoints.push_back(x_point);
-		linePoints.push_back(y_point);
+		linePoint.push_back(x_point);
+		linePoint.push_back(y_point);
+
+		linePoints.push_back(linePoint);
 		
+
+		
+
 	}
 
 	double euclidean_distance = 0;
 	double min_euclidean_distance = 999999999999;
 
-	std::pair <int, int> min;
+	std::pair<int,int> min;
 
 
 	for (int i = 0; i < linePoints.size(); i++) {
 
-		euclidean_distance = sqrt( (  (linePoints.at(i).at(0) - point_x) *(linePoints.at(i).at(0) - point_x) )  +  ( (linePoints.at(i).(1) - point_y) *(linePoints.at(i).(1) - point_y) )  );
+		double asd = (linePoints.at(i).at(0) - point_x) *(linePoints.at(i).at(0) - point_x);
+		double bsd = (linePoints.at(i).at(1) - point_y) * (linePoints.at(i).at(1) - point_y) ;
+		
+		euclidean_distance = asd + bsd;        
+		
+		euclidean_distance = sqrt(euclidean_distance);
 
 		if (min_euclidean_distance > euclidean_distance) {
 
@@ -4133,4 +4149,4 @@ void serverLoop(void * arg)
 	return min;
 
 
-}*/
+}
