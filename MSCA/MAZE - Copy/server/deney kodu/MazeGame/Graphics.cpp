@@ -262,10 +262,7 @@ int main(int argc, char **argv)
 		path.isVisited.push_back(false);
 	}
 
-	char i; 
 
-
-	cin >> i;
 
 	for (int i = 0; i+1 < path.dtargetsX.size(); i++) {
 		createLine(path.dtargetsX.at(i),path.dtargetsY.at(i), path.dtargetsX.at(i+1), path.dtargetsY.at(i+1));
