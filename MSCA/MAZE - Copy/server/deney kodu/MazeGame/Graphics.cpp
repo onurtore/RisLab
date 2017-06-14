@@ -263,7 +263,7 @@ int main(int argc, char **argv)
 	}
 	
 	for (int i = 0; i+1 < path.dtargetsX.size(); i++) {
-		createLine(path.dtargetsX.at(i),path.dtargetsY.at(i), path.dtargetsX.at(i+1), path.dtargetsY.at(i+1)),;
+		createLine(path.dtargetsX.at(i),path.dtargetsY.at(i), path.dtargetsX.at(i+1), path.dtargetsY.at(i+1));
 	}
 
 //Onur
@@ -914,7 +914,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 	graphCtrller->addBoard();
 
 
-	/**
+	
 	//Onur 
 	if (firstTime) {
 
@@ -937,7 +937,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 			graphCtrller->addBall(res_x,res_z);
 		}
 	}
-	*/
+	
 
 	double Xsrc_max = 82;	//Onur Code x axis max up-down 
 	double Xsrc_min = 0;	//Onur Code x axis min up-down

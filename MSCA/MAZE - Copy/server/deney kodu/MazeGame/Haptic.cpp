@@ -101,7 +101,8 @@ extern float ballRadius;
 extern vector<double> hapticForce;
 extern wheretoGo path;
 extern vector<  vector< float  > > lineEquations;
-vector<  vector< float  > > closestLinePoint(int x, int y);
+
+//pair<int,int> closestLinePoint(int point_x, int point_y) ;
 Vector boundary;
 float boundaryThickness;
 static HDdouble *gServoMotorTemp = 0;
@@ -4036,7 +4037,7 @@ void serverLoop(void * arg)
 //return nonCollidingBallPos;
 //}
 
-pair<int,int> closestLinePoint(int point_x, int point_y) {
+/*pair<int,int> closestLinePoint(int point_x, int point_y) {
 
 	
 	float y;
@@ -4132,4 +4133,4 @@ pair<int,int> closestLinePoint(int point_x, int point_y) {
 	return min;
 
 
-}
+}*/

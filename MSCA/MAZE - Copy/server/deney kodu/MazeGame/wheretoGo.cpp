@@ -220,7 +220,7 @@ void wheretoGo::AddPotentialField() {
 
 float wheretoGo::repelForce(double x, double y) {
 
-	float repelForce = 0;
+	float repelForce = 0 ;
 
 	for (unsigned int i = 0; i < barriersX.size(); i++) {
 		double euclidean_distance = sqrt(pow(x - barriersX.at(i), 2) + pow(y - barriersY.at(i), 2));
@@ -342,19 +342,19 @@ void wheretoGo::calculateWavefront() {
 
 int wheretoGo::minValue(double x, double y) {
 
-	int globalMin = barrier;
+	double globalMin = barrier;
 
 	for (int k = 0; k < neighbors.size(); k++) {
 
 	
-		int i = x + neighbors.at(k).first;
+		double i = x + neighbors.at(k).first;
 
-		int j = y + neighbors.at(k).second;
+		double j = y + neighbors.at(k).second;
 
 		if ((i >= 0 && i < matrixHeight) && (j >= 0 && j < matrixWidth)) {
 
 			if (waveFrontMatrix[i][j] != barrier && waveFrontMatrix[i][j] != freeCell) {
-				int min = waveFrontMatrix[i][j];
+				double min = waveFrontMatrix[i][j];
 				if (min < globalMin) {
 					globalMin = min;
 				}
@@ -445,10 +445,10 @@ void wheretoGo::writeImprovedPathToFile(string filename) {
 
 vector<double> wheretoGo::findMinPath(int x, int y) {
 
-	int globalMin = barrier;
+	double  globalMin = barrier;
 	vector<double> newxy(2);
 
-	int i,j;
+	double i,j;
 
 	
 	for (int k = 0; k < neighbors.size(); k++) {
@@ -460,7 +460,7 @@ vector<double> wheretoGo::findMinPath(int x, int y) {
 
 			if (potantielFieldMatrix[i][j] != barrier) {
 				
-				int min = potantielFieldMatrix[i][j];
+				double min = potantielFieldMatrix[i][j];
 				if (min < globalMin) {
 					globalMin = min;
 					newxy.at(0) = i;
