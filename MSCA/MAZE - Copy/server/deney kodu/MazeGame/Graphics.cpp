@@ -926,8 +926,8 @@ void GenerateDefaultGraphics(SoSeparator * root)
 	graphCtrller->addBall();
 	graphCtrller->addBoard();
 
-
-	
+	/*
+		Below code draw the path
 	//Onur 
 	if (firstTime) {
 
@@ -968,7 +968,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 	//graphCtrller->addBall(res_x, res_z);
 
 	//Onur
-		
+		*/
 
 	if(dataRec->scenario == MIXED)
 		graphCtrller->addWall();
