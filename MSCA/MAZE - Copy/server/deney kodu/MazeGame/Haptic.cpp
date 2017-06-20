@@ -1743,7 +1743,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//}
 	// send all forces to device
 	HDdouble fToD2[3] = { forceFB2[0], forceFB2[1], forceFB2[2] };
-
+	cout << forceFB2.length();
 	// send forces to the client
 	server->timestamp = currentTime;
 
@@ -2568,10 +2568,10 @@ float 	look_ahead_pos_z = cpZ + (look_ahead_time * cvZ);
 
 
 	if (runs % 1000 == 0) {
-		cout << "hcX is:  " << hcpX << "\t hcvZ is: " << hcpZ << "\n";
-	//	cout << "res_x is:" << res_x << "\tres_z is:" << res_z << "\n";
+		//cout << "hcX is:  " << hcpX << "\t hcvZ is: " << hcpZ << "\n";
+		//	cout << "res_x is:" << res_x << "\tres_z is:" << res_z << "\n";
 		//	cout << "res_x is: " << path.dtargetsX.at(j) << "res_z is: " << path.dtargetsY.at(j) << "\n";
-		cout << "algorithm bpx force is: " << Algorithm_force[0] << "algorithm bpz force is: " << Algorithm_force[2] << "\n\n\n";
+		//cout << "algorithm bpx force is: " << Algorithm_force[0] << "algorithm bpz force is: " << Algorithm_force[2] << "\n\n\n";
 		//cout << "lefthaptic bpx force is: " << kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) << " left haptic bpz force is: "  << kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ) << "\n\n\n"; 
 	}
 
