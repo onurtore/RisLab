@@ -686,7 +686,6 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	}
 
 	//Not the first time
-	//Onur Her þey bu if'in içinde oluyor
 	else if ((effect->keepHapticLoop) == true)
 	{
 		giveWarning = 0;
@@ -1664,7 +1663,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	HDdouble kStiffness;
 
 
-	//Onur Burdan sonrasý backforce uyguluyor.
+	//Onur Burdan sonrasý feedback uyguluyor.
 
 
 
@@ -2491,10 +2490,10 @@ Vector calcBallPos()
 	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
 
 
-float 	look_ahead_time = 0.01;
+	float 	look_ahead_time = 0.01;
 	
-float 	look_ahead_pos_x = cpX + (look_ahead_time * cvX);
-float 	look_ahead_pos_z = cpZ + (look_ahead_time * cvZ);
+	float 	look_ahead_pos_x = cpX + (look_ahead_time * cvX);
+	float 	look_ahead_pos_z = cpZ + (look_ahead_time * cvZ);
 
 
 	float reference_point_x = 0 ;
@@ -2564,19 +2563,6 @@ float 	look_ahead_pos_z = cpZ + (look_ahead_time * cvZ);
 
 
 
-
-
-
-	if (runs % 1000 == 0) {
-		//cout << "hcX is:  " << hcpX << "\t hcvZ is: " << hcpZ << "\n";
-		//	cout << "res_x is:" << res_x << "\tres_z is:" << res_z << "\n";
-		//	cout << "res_x is: " << path.dtargetsX.at(j) << "res_z is: " << path.dtargetsY.at(j) << "\n";
-		//cout << "algorithm bpx force is: " << Algorithm_force[0] << "algorithm bpz force is: " << Algorithm_force[2] << "\n\n\n";
-		//cout << "lefthaptic bpx force is: " << kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) << " left haptic bpz force is: "  << kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ) << "\n\n\n"; 
-	}
-
-	cpX = +(Algorithm_force.at(0) / kpHN) - hcpX;
-	cpZ = +(Algorithm_force.at(2) / kpHN) - hcpZ;
 
 
 	//Onur Left haptic working right haptic is my algorithm
