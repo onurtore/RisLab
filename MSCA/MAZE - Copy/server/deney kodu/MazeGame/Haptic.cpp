@@ -287,8 +287,8 @@ Vector firstPosHip, firstPosCip;
 
 double kp = 0.4;
 double ki = 0.001;
-//Onur
-int timeToGoInit = 3000;
+//onur
+int timeToGoInit = 7000;
 vector<double> Algorithm_force(3);
 //int timeToGoInit = 15000;
 int wait = 1000;
@@ -366,7 +366,11 @@ void serverLoop(void * arg);
 	bool isWarning = false;
 
 
+	//Error Check Variables
 
+		// For Error Check 2
+		float old_reference_point_x = 0;
+		float old_reference_point_z = 0;
 
 
 HapticCallBack::HapticCallBack()
@@ -568,8 +572,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	static int conflictCounter = 0;
 
-
-	//Onur -> Calculate the force for the drag the cube (ball), to the neareast point, on the path
+	if( ( (runs > timeToGoInit+wait) && (trialNo == 1) ) || (trialNo!=1) ) {
+	//Onur -> Calculate the force for the drag the  cube (ball), to the neareast point, on the path
 
 		/*Summary 
 		f_net = k_stiffness * (x_look_ahead - x_ref )
@@ -601,11 +605,13 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		if(bpX == 0 && bpY == 0 && bpZ == 0  && isWarning == false){
 			cout << "Warning: ball position data is zero\n";
 			isWarning = true;
+			
 		}
 
 		if(bvX == 0 && bvY == 0 && bvZ == 0 && isWarning == false ){
 			cout << "Warning: ball velocity data is zero\n";
 			isWarning = true;
+		
 		}
 
 		//Calculate look ahead position
@@ -616,6 +622,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 			cout << "Warning: look ahead position is zero\n";
 			isWarning = true;
+			
 		}
 
 
@@ -670,6 +677,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 			cout << "Warning : Onur coordinate system reference points are zero \n";
 			isWarning = true;
+
 		}
 
 
@@ -684,22 +692,47 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		if(reference_point_x == 0 && reference_point_z == 0  && isWarning == false){
 
 			cout << "Warning : Reference Points are zero \n";
-			isWarning = true;
+		
 		}
 
+		//error check 2
+		if(reference_point_x != old_reference_point_x && reference_point_z != old_reference_point_x){
+
+
+			if(reference_point_x >= +100 || reference_point_x <= -100 || reference_point_z >= 41 ||reference_point_z <= -41 ) 
+			{
+				//do nothing
+			
+					cout << "error : \t" << "reference_point_x  : " << reference_point_x << "\t" <<" reference_point_z : " << reference_point_z << "\n";
+ 				
+				
+			}
+			else{
+				
+					cout << "reference_point_x  : " << reference_point_x << "\t" <<" reference_point_z : " << reference_point_z << "\n";
+ 				
+				
+				//graphCtrller->addPathCube(reference_point_x,reference_point_z);
+				old_reference_point_x = reference_point_x;
+				old_reference_point_z = reference_point_z;
+
+			}
+		}
 		//calculate force
 
-		algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
-		algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
+		
 
-		if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
+		//algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
+		//algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
+
+		/*if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
 			
 			cout << "Warning : Algorithm forces are zero \n";
 			isWarning = true;
-		}
+		}*/
 
 
-
+	}
 
 
 

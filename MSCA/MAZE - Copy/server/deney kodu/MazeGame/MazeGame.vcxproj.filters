@@ -70,6 +70,9 @@
     <ClCompile Include="wheretoGo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pathCube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h">
@@ -136,6 +139,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Public2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pathCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -173,6 +173,7 @@
     </ClCompile>
     <ClCompile Include="HapticInterfacePoint.cpp" />
     <ClCompile Include="HIPgraphics.cpp" />
+    <ClCompile Include="pathCube.cpp" />
     <ClCompile Include="Spring.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="..\DataTransferSocket\Network\NetworkServices.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="HapticInterfacePoint.h" />
     <ClInclude Include="HIPgraphics.h" />
     <ClInclude Include="MathCB.h" />
+    <ClInclude Include="pathCube.h" />
     <ClInclude Include="Public.h" />
     <ClInclude Include="Public2.h" />
     <ClInclude Include="SoundPlayerThread.h" />

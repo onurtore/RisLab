@@ -6,7 +6,7 @@
 #include "wall.h"
 #include "force_vector.h"
 #include "spring.h"
-
+#include "pathCube.h"
 
 class GraphicsController
 {
@@ -60,6 +60,7 @@ public:
 	void addBall();
 	//Onur
 	void addBall(double x, double y);
+	void addPathCube(double x,double z);
 	//Onur
 	void addInterfacePoints();
 	void addBoard();

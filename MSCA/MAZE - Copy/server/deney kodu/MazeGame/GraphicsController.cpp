@@ -36,7 +36,6 @@ GraphicsController::GraphicsController(int scenario, int cond)
 	wall3 = new Wall(wallHeight, wallWidth23, wallDepth23 ,wallTx3,wallTy,wallTz3);
 	
 
-
 }
 
 SoSeparator* GraphicsController::getRoot1()
@@ -64,6 +63,15 @@ void GraphicsController::addBall(double x , double z) {
 	ballGr2 = new BallGr(root2, Point(x, 0.8f, z), 2.0f, 1.0f, BALL_DEPTH, BALL_RADIUS, BALL_MASS, Vector(1, 1, 1));
 
 }
+
+void GraphicsController::addPathCube(double x,double z){
+	//maybe i should change name to pathCubeGr because i dont want any physical interaction between this thing.Just the graphic
+	 new pathCube(root1, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
+	 new pathCube(root2, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
+}
+
+
+
 //Onur
 void GraphicsController::addVector()
 {
