@@ -442,7 +442,7 @@ int HapticCallBack::initialize_phantom(bool myboolean)
 	hdEnable(HD_SOFTWARE_VELOCITY_LIMIT);
 	hdEnable(HD_SOFTWARE_FORCE_IMPULSE_LIMIT);
 
-	hdGetDoublev(HD_NOMINAL_MAX_CONTINUOUS_FORCE, &FORCE_LIMIT);
+	//hdGetDoublev(HD_NOMINAL_MAX_CONTINUOUS_FORCE, &FORCE_LIMIT);
 	hdGetFloatv(HD_NOMINAL_MAX_STIFFNESS, &KP_LIMIT);
 	hdGetFloatv(HD_NOMINAL_MAX_DAMPING, &KD_LIMIT);
 
@@ -598,11 +598,15 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		float onur_reference_point_y = 0;
 		float reference_point_x      = 0;
 		float reference_point_z      = 0;
-
+		float 	old_ECGO_x = 0;
+		float 	old_ECGO_z = 0;
 		//Get Values
 		graphCtrller->ballGr->getPosition().getValue(bpX,bpY,bpZ);
-		graphCtrller->ballGr->getPosition().getValue(bvX,bvY,bvZ);
-
+		graphCtrller->ballGr->getVelocity().getValue(bvX,bvY,bvZ);
+		Point x = graphCtrller->cip.getPosition();
+		cpX = x[0];
+		cpY = x[1];
+		cpZ  = x[2];
 		if(bpX == 0 && bpY == 0 && bpZ == 0  && isWarning == false){
 			cout << "Warning: ball position data is zero\n";
 			isWarning = true;
@@ -746,18 +750,14 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			}
 				
 		}
+		ECGO_z = ((path.dtargetsX.at(place_holder) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
+		ECGO_x = ((path.dtargetsY.at(place_holder) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
+			
 
 
-		ECGO_x = path.dtargetsX.at(place_holder);
-		ECGO_z = path.dtargetsY.at(place_holder);
+
+
 		
-		onurRUNS++;
-		if(onurRUNS %800 == 0 ){
-
-			cout << "bpx is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-			cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
-
-		}
 		
 	
 		//calculate force
@@ -767,16 +767,21 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//	algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
 	//	algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
 
+		algorithm_force_x =  -k_stiffness * (look_ahead_x - ECGO_x);
+		algorithm_force_z =  -k_stiffness * (look_ahead_z - ECGO_z);
 
-		algorithm_force_x = k_stiffness * (look_ahead_x - ECGO_x);
-		algorithm_force_z = k_stiffness * (look_ahead_z - ECGO_z);
-
-
-		if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
-			
-			cout << "Warning : Algorithm forces are zero \n";
-			isWarning = true;
+		onurRUNS++;
+		if(onurRUNS %4000 == 0 ){
+			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
+			cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
+			cout << "cpx is:" << cpX <<"\t" << "cpz is:" << cpZ <<"\n";
+			cout << "algorithm_force_x:" << algorithm_force_x << "\t" << "algorithm_force_z:" << algorithm_force_z << "\n\n";
 		}
+		//if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
+			
+		//	cout << "Warning : Algorithm forces are zero \n";
+		//	isWarning = true;
+		//}
 
 
 	}
@@ -1789,6 +1794,9 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			forceFB2[1] = 0;
 			forceFB2[2] = (hcpZ - cpZ)*kpCN + (hcvZ - cvZ)*kdN;
 			fOnCip = forceFB2;
+
+
+
 		}
 
 
@@ -1969,20 +1977,24 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	fMag = forceFB2.length();
 	if (fMag > FORCE_LIMIT)
-	{
+	{	
 		forceFB2 = (forceFB2 / fMag) * FORCE_LIMIT;
 	}
 	forceFB2 = F_SCALE_FACTOR * forceFB2;
 
+	/*
 	//Onur 
 	if(forceFB2.length() > FORCE_LIMIT){
 
-		cout <<	"Warning : forceFB2 is exceed maximum limit \n";
 		forceFB2[0] = 0 ;
 		forceFB2[1] = 0; 
 		forceFB2[2] = 0;
 	}
-
+	*/
+	if(onurRUNS %4000 == 0 ){
+			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
+			cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n";
+	}
 
 
 	position = server->positionData;

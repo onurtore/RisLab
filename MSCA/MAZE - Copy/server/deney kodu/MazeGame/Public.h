@@ -96,7 +96,7 @@ typedef SbVec3f Vector;
 
 
 // STATIC GLOBALS
-#define PHANTOM_PREMIUM		// define if using a phantom premium device, 
+//#define PHANTOM_PREMIUM		// define if using a phantom premium device, 
 // otherwise assumed to be using phantom omni 
 #ifdef PHANTOM_PREMIUM
 #define F_SCALE_FACTOR 0.7f // factor to scale force in case it is greater than FORCE_LIMIT

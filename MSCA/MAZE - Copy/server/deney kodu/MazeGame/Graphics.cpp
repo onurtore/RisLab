@@ -926,8 +926,9 @@ void GenerateDefaultGraphics(SoSeparator * root)
 	graphCtrller->addBall();
 	graphCtrller->addBoard();
 
-	/*
+	
 	//Onur 
+	/*
 	if (firstTime) {
 
 		double Xsrc_max = 82;	//Onur Code x axis max up-down 
@@ -945,12 +946,13 @@ void GenerateDefaultGraphics(SoSeparator * root)
 		for (int i = 0; i < path.dtargetsX.size(); i++) {
 			double res_z = ((path.dtargetsX.at(i) - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
 			double res_x = ((path.dtargetsY.at(i) - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
-
+			
+			cout << res_x << "\t" << res_z << "\n";
 			graphCtrller->addBall(res_x,res_z);
 		}
 	}
+	
 	*/
-
 
 	//Onur
 		
