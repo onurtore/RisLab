@@ -372,7 +372,7 @@ void serverLoop(void * arg);
 		float old_reference_point_x = 0;
 		float old_reference_point_z = 0;
 
-
+	int onurRUNS = 0;
 HapticCallBack::HapticCallBack()
 {
 	curTrial = 0;
@@ -571,7 +571,9 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	char str[20] = " ";
 
 	static int conflictCounter = 0;
-
+	
+	float algorithm_force_x      = 0;
+	float algorithm_force_z      = 0;
 	if( ( (runs > timeToGoInit+wait) && (trialNo == 1) ) || (trialNo!=1) ) {
 	//Onur -> Calculate the force for the drag the  cube (ball), to the neareast point, on the path
 
@@ -584,8 +586,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		fright = fnet - f_left
 		*/
 
-		float algorithm_force_x      = 0;
-		float algorithm_force_z      = 0;
+	
 		float k_stiffness            = 0.8;
 		float look_ahead_x           = 0;
 		float look_ahead_z           = 0;
@@ -693,43 +694,89 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 			cout << "Warning : Reference Points are zero \n";
 		
+
 		}
+		
+		//Error Check 2
 
-		//error check 2
-		if(reference_point_x != old_reference_point_x && reference_point_z != old_reference_point_x){
+		double ECXsrc_max = 82;	//Onur Code x axis max up-down 
+		double ECXsrc_min = 0;	//Onur Code x axis min up-down
+		double ECYsrc_max = 200;	//Onur Code y axis max left-right
+		double ECYsrc_min = 0;	//Onur Code y axis min left-right
 
 
-			if(reference_point_x >= +100 || reference_point_x <= -100 || reference_point_z >= 41 ||reference_point_z <= -41 ) 
-			{
-				//do nothing
+
+		double ECXres_min = -100; //MazeGame x axis min left-right 
+		double ECXres_max = +100;	//MazeGame x axis max left-right
+		double ECZres_min = -41;	//MazeGame z axis min up-down
+		double ECZres_max = +41;	//MazeGame z axis max up-down
+
+		double minDistance = 9999;
+		double x_diff = 0;
+		double y_diff = 0;
+		
+		double distance = 0;
+		double ECGO_x = 0;
+		double ECGO_z = 0;
+		int place_holder = 0;
+
+		for (int i = 0; i < path.dtargetsX.size(); i++) {
+			double res_z = ((path.dtargetsX.at(i) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
+			double res_x = ((path.dtargetsY.at(i) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
 			
-					cout << "error : \t" << "reference_point_x  : " << reference_point_x << "\t" <<" reference_point_z : " << reference_point_z << "\n";
- 				
-				
-			}
-			else{
-				
-					cout << "reference_point_x  : " << reference_point_x << "\t" <<" reference_point_z : " << reference_point_z << "\n";
- 				
-				
-				//graphCtrller->addPathCube(reference_point_x,reference_point_z);
-				old_reference_point_x = reference_point_x;
-				old_reference_point_z = reference_point_z;
 
+
+			x_diff = res_x - bpX;
+			y_diff = res_z - bpZ;
+
+
+			distance = sqrt(pow(x_diff,2) + pow(y_diff,2) );
+
+			
+			if(distance < 10 ){
+
+				continue;
 			}
+
+			else{
+				if(distance < minDistance ){
+					minDistance = distance;
+					place_holder = i;
+				}
+			}
+				
 		}
+
+
+		ECGO_x = path.dtargetsX.at(place_holder);
+		ECGO_z = path.dtargetsY.at(place_holder);
+		
+		onurRUNS++;
+		if(onurRUNS %800 == 0 ){
+
+			cout << "bpx is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
+			cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
+
+		}
+		
+	
 		//calculate force
 
 		
+		
+	//	algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
+	//	algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
 
-		//algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
-		//algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
 
-		/*if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
+		algorithm_force_x = k_stiffness * (look_ahead_x - ECGO_x);
+		algorithm_force_z = k_stiffness * (look_ahead_z - ECGO_z);
+
+
+		if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
 			
 			cout << "Warning : Algorithm forces are zero \n";
 			isWarning = true;
-		}*/
+		}
 
 
 	}
@@ -1917,8 +1964,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//hdGetDoublev(HD_NOMINAL_MAX_STIFFNESS, &kStiffness);
 	
 	//onur change values
-	//forceFB2[0] = algorithm_force_x;
-	//forceFB2[2] = algorithm_force_z;
+	forceFB2[0] = algorithm_force_x;
+	forceFB2[2] = algorithm_force_z;
 
 	fMag = forceFB2.length();
 	if (fMag > FORCE_LIMIT)

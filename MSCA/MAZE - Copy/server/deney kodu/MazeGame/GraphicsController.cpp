@@ -66,8 +66,8 @@ void GraphicsController::addBall(double x , double z) {
 
 void GraphicsController::addPathCube(double x,double z){
 	//maybe i should change name to pathCubeGr because i dont want any physical interaction between this thing.Just the graphic
-	 new pathCube(root1, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
-	 new pathCube(root2, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
+	mypathCube = new pathCube(root1, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
+	mypathCube = new pathCube(root2, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
 }
 
 

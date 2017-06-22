@@ -15,6 +15,8 @@ public:
 	BoardGraphics *boardGr2;
 	BallGr *ballGr;
 	BallGr *ballGr2;
+	pathCube *mypathCube;
+	pathCube *mypathCube2;
 	Wall *wall1;
 	Wall *wall2;
 	Wall *wall3;
@@ -60,7 +62,7 @@ public:
 	void addBall();
 	//Onur
 	void addBall(double x, double y);
-	void addPathCube(double x,double z);
+	void addPathCube(double x,double y);
 	//Onur
 	void addInterfacePoints();
 	void addBoard();

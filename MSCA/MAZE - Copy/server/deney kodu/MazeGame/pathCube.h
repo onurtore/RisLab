@@ -10,7 +10,7 @@
 class  pathCube
 {
 public:
-	Ball *ball;
+
 	SoTransform *transfMat;
     SoTransform *transf;
 	SoTransform *transfn;
