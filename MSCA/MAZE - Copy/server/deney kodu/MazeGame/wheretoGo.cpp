@@ -448,7 +448,7 @@ vector<double> wheretoGo::findMinPath(int x, int y) {
 	double  globalMin = barrier;
 	vector<double> newxy(2);
 
-	double i,j;
+	double i = 0 ,j = 0;
 
 	
 	for (int k = 0; k < neighbors.size(); k++) {

@@ -1,0 +1,2 @@
+Check : The path finding is right
+	ErrorCheck1.png

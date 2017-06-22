@@ -1,4 +1,4 @@
-/**************************************************************************
+ï»¿/**************************************************************************
 Developed by: Cigil Ece Madan and Ayse Kucukyilmaz
 Purpose: The server loop for haptic.
 Date: Jul. 22, 2013
@@ -102,7 +102,7 @@ extern vector<double> hapticForce;
 extern wheretoGo path;
 extern vector<  vector< float  > > lineEquations;
 
-std::pair<int,int> closestLinePoint(int point_x, int point_y);
+std::pair<int,int> closestLinePoint(float point_x, float point_y);
 Vector boundary;
 float boundaryThickness;
 static HDdouble *gServoMotorTemp = 0;
@@ -252,7 +252,7 @@ Vector boundaryColl_full(Vector ballPosNext);
 Vector calculateFriction();
 
 
-//Onur Bu fonksiyonun içeriðini deðiþtirdim
+//Onur Bu fonksiyonun iï¿½eriï¿½ini deï¿½iï¿½tirdim
 Vector calcBallPos();
 
 // find the closest wall
@@ -326,6 +326,48 @@ float PRACTICE_TARGET_POS_A2_M[PRACTICE_COUNTS][3];
 ServerApp *server;
 
 void serverLoop(void * arg);
+
+
+
+
+/*Onur Variables*/
+
+	//Onur Coordinate Transformation Variables
+	//Transformation of coordinate system from Haptic to onur code 
+	//Dont even think about to change without saving somewhere 
+	//Code work right,3 times checked
+	float HOXsrc_min = -100;	//MazeGame x axis min left-right
+	float HOXsrc_max = +100;	//MazeGame x axis max left-right
+	float HOZsrc_min = -41;	//MazeGame z axis min up-down
+	float HOZsrc_max = +41;	//MazeGame z axis max up-down
+
+	float HOXres_min = 0;	//Onur Code x axis min up-down
+	float HOXres_max = +82;  //Onur Code x axis max up-down
+	float HOYres_min = 0;	//Onur Code y axis min left-right
+	float HOYres_max = 200; //Onur Code y  axis max left-right
+
+	//Transformation of coordinate system from onur code  to haptic  
+	//Dont even think about to change without saving somewhere 
+	//Code work right,3 times checked
+	float OHXsrc_max = 82;	//Onur Code x axis max up-down 
+	float OHXsrc_min = 0;	//Onur Code x axis min up-down
+	float OHYsrc_max = 200;	//Onur Code y axis max left-right
+	float OHYsrc_min = 0;	//Onur Code y axis min left-right
+
+	float OHXres_min = -100; //MazeGame x axis min left-right 
+	float OHXres_max = +100; //MazeGame x axis max left-right
+	float OHZres_min = -41;	//MazeGame z axis min up-down
+	float OHZres_max = +41;	//MazeGame z axis max up-down
+
+
+
+
+	//Check Warning
+	bool isWarning = false;
+
+
+
+
 
 HapticCallBack::HapticCallBack()
 {
@@ -526,6 +568,141 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	static int conflictCounter = 0;
 
+
+	//Onur -> Calculate the force for the drag the cube (ball), to the neareast point, on the path
+
+		/*Summary 
+		f_net = k_stiffness * (x_look_ahead - x_ref )
+		x_look_ahead = x_current_pos + (t_look_ahead * v_current ) 
+
+		fnet = f_right + f_left
+
+		fright = fnet - f_left
+		*/
+
+		float algorithm_force_x      = 0;
+		float algorithm_force_z      = 0;
+		float k_stiffness            = 0.8;
+		float look_ahead_x           = 0;
+		float look_ahead_z           = 0;
+		float bvX = 0, bvY = 0, bvZ  = 0;
+		float t_look_ahead           = 0.01;
+		float res_x                  = 0;
+		float res_y                  = 0;
+		float onur_reference_point_x = 0;
+		float onur_reference_point_y = 0;
+		float reference_point_x      = 0;
+		float reference_point_z      = 0;
+
+		//Get Values
+		graphCtrller->ballGr->getPosition().getValue(bpX,bpY,bpZ);
+		graphCtrller->ballGr->getPosition().getValue(bvX,bvY,bvZ);
+
+		if(bpX == 0 && bpY == 0 && bpZ == 0  && isWarning == false){
+			cout << "Warning: ball position data is zero\n";
+			isWarning = true;
+		}
+
+		if(bvX == 0 && bvY == 0 && bvZ == 0 && isWarning == false ){
+			cout << "Warning: ball velocity data is zero\n";
+			isWarning = true;
+		}
+
+		//Calculate look ahead position
+		look_ahead_x = bpX + (t_look_ahead * bvX);
+		look_ahead_z = bpZ + (t_look_ahead * bvZ); 
+
+		if(look_ahead_x == 0 && look_ahead_x == 0 && isWarning == false){
+
+			cout << "Warning: look ahead position is zero\n";
+			isWarning = true;
+		}
+
+
+		//Calculate reference position
+		//Closest point on the path, for the given point
+
+
+
+		//Friendly Reminder
+		/*
+		//Transformation of coordinate system from Haptic to onur code 
+			float HOXsrc_min = -100;	//MazeGame x axis min left-right
+			float HOXsrc_max = +100;	//MazeGame x axis max left-right
+			float HOZsrc_min = -41;	//MazeGame z axis min up-down
+			float HOZsrc_max = +41;	//MazeGame z axis max up-down
+
+			float HOXres_min = 0;	//Onur Code x axis min up-down
+			float HOXres_max = +82;  //Onur Code x axis max up-down
+			float HOYres_min = 0;	//Onur Code y axis min left-right
+			float HOYres_max = 200; //Onur Code y  axis max left-right
+
+			//Transformation of coordinate system from onur code  to haptic  
+		
+			float OHXsrc_max = 82;	//Onur Code x axis max up-down 
+			float OHXsrc_min = 0;	//Onur Code x axis min up-down
+			float OHYsrc_max = 200;	//Onur Code y axis max left-right
+			float OHYsrc_min = 0;	//Onur Code y axis min left-right
+
+			float OHXres_min = -100; //MazeGame x axis min left-right 
+			float OHXres_max = +100; //MazeGame x axis max left-right
+			float OHZres_min = -41;	//MazeGame z axis min up-down
+			float OHZres_max = +41;	//MazeGame z axis max up-down
+		*/
+
+		//Transform Haptic coordinate points of look_ahead position to  Onur Coordinate System points
+
+			//up down transformation
+			res_x = ( look_ahead_x - HOZsrc_min) / (HOZsrc_max -HOZsrc_min) * (HOXres_max - HOXres_min) + HOXres_min;
+			//left right transformation
+			res_y = ( look_ahead_x - HOXsrc_min) / ( HOXsrc_max - HOXsrc_min) * ( HOYres_max - HOYres_min ) + HOYres_min;
+
+
+		//Calculate closest point to path
+		std::pair<int,int> minRef = closestLinePoint(res_x,res_y);
+
+
+		//points which have minimum distance to the given point, but in the onur coordinate system
+		onur_reference_point_x = std::get<0>(minRef);
+		onur_reference_point_y = std::get<1>(minRef);
+
+		if(onur_reference_point_x == 0 && onur_reference_point_y == 0 && isWarning == false ){
+
+			cout << "Warning : Onur coordinate system reference points are zero \n";
+			isWarning = true;
+		}
+
+
+		//translate onur reference points to  haptic coordinate system
+
+			//left right transformation
+			reference_point_x = ((  onur_reference_point_y - OHYsrc_min ) / (OHYsrc_max - OHYsrc_min ) * (OHXres_max - OHXres_min) + OHXres_min);
+			//up down transformation
+			reference_point_z = (( onur_reference_point_x - OHXsrc_min ) / (OHXsrc_max - OHXsrc_min) * (OHZres_max - OHZres_min ) + OHZres_min );
+
+
+		if(reference_point_x == 0 && reference_point_z == 0  && isWarning == false){
+
+			cout << "Warning : Reference Points are zero \n";
+			isWarning = true;
+		}
+
+		//calculate force
+
+		algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
+		algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
+
+		if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
+			
+			cout << "Warning : Algorithm forces are zero \n";
+			isWarning = true;
+		}
+
+
+
+
+
+
 	Point myP1, myP2;
 	hduVector3Dd pos;
 	//hduVector3Dd vel;
@@ -539,6 +716,9 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	hpX = myP1[0];
 	hpY = myP1[1];
 	hpZ = myP1[2];
+
+
+
 
 	// velocities are calculated, not read from devices
 	//hipvX = vel[0];
@@ -686,6 +866,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	}
 
 	//Not the first time
+	//Onur Her ï¿½ey bu if'in iï¿½inde oluyor
 	else if ((effect->keepHapticLoop) == true)
 	{
 		giveWarning = 0;
@@ -893,19 +1074,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 			//Onur 
 			/*
-			Hangi force hangi forcea bakalým
+			Hangi force hangi forcea bakalï¿½m
 
 				forceFB1 = hhp -> left device
 				forceFB2 = cpx -> algorithm
 			*/
-
-			////onur 
-			////change the right haptic force with my algorithm
-
-			force2[0] = Algorithm_force.at(0);
-			force2[2] = Algorithm_force.at(2);
-			////
-
 
 			// AYSE: deleting
 			//angle_rot = 
@@ -920,7 +1093,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			//	graphCtrller->ballGr2->setAngleBallGr(angle_rot);
 			//}
 
-		}//if( ( (runs > timeToGoInit+wait) && (trialNo==1) ) || (trialNo!=1) ) bunun bitiþi
+		}//if( ( (runs > timeToGoInit+wait) && (trialNo==1) ) || (trialNo!=1) ) bunun bitiï¿½i
 		ballPosNext = calcBallPos();
 		//CIGIL
 		// check the angle of the board 
@@ -1361,7 +1534,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			}
 
 
-		}// if( ( (runs >timeToGoInit+wait)&&(trialNo==1) ) || (trialNo!=1)) bunun bitiþi
+		}// if( ( (runs >timeToGoInit+wait)&&(trialNo==1) ) || (trialNo!=1)) bunun bitiï¿½i
 
 	//fp << hpX << ", " << hvX << ", " << cpX << ", " << cvX << ", ";
 
@@ -1616,8 +1789,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			force1[2] = forceFB1[2] - f_forceZ;
 
 			//Onur
-			//Ikýnci haptiðin forcu
-			//Buna benim algoritmamýn ürettiði forcu ekleyelim ? 
+			//Ikï¿½nci haptiï¿½in forcu
+			//Buna benim algoritmamï¿½n ï¿½rettiï¿½i forcu ekleyelim ? 
 			force2[0] = forceFB2[0] - f_forceX;
 			force2[2] = forceFB2[2] - f_forceZ;
 
@@ -1637,8 +1810,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 				// Change the force2 for my algorithm 
 
 
-				force2[0] = Algorithm_force.at(0);
-				force2[2] = Algorithm_force.at(2);
+			
 				//Onur
 				graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
 				graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
@@ -1656,14 +1828,14 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 		}
 
-	}//else if((effect->keepHapticLoop) == true)// Bunun bitiþi burasý Her þey bu if'in içinde oluyor
+	}//else if((effect->keepHapticLoop) == true)// Bunun bitiï¿½i burasï¿½ Her ï¿½ey bu if'in iï¿½inde oluyor
 
 
 	hduVector3Dd position;
 	HDdouble kStiffness;
 
 
-	//Onur Burdan sonrasý feedback uyguluyor.
+	//Onur Burdan sonrasi feedback uyguluyor.
 
 
 
@@ -1693,9 +1865,9 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	fOnHip_scaled = forceFB1;
 	// send all forces to device
-	//Onur comment backforce for Haptic 1
-	//HDdouble fToD1[3] = { forceFB1[0], forceFB1[1], forceFB1[2] };
-	HDdouble fToD1[3] = { 0, 0, 0 };
+	//Onur comment feedback for Haptic 1
+	HDdouble fToD1[3] = { forceFB1[0], forceFB1[1], forceFB1[2] };
+	//HDdouble fToD1[3] = { 0, 0, 0 };
 
 
 	effect->PreventWarmMotors(hduVector3Dd(fToD1[0], fToD1[1], fToD1[2]));
@@ -1710,6 +1882,10 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//hdMakeCurrentDevice(effect->hHD2);
 	//hdGetDoublev(HD_CURRENT_POSITION, position);
 	//hdGetDoublev(HD_NOMINAL_MAX_STIFFNESS, &kStiffness);
+	
+	//onur change values
+	//forceFB2[0] = algorithm_force_x;
+	//forceFB2[2] = algorithm_force_z;
 
 	fMag = forceFB2.length();
 	if (fMag > FORCE_LIMIT)
@@ -1717,6 +1893,17 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		forceFB2 = (forceFB2 / fMag) * FORCE_LIMIT;
 	}
 	forceFB2 = F_SCALE_FACTOR * forceFB2;
+
+	//Onur 
+	if(forceFB2.length() > FORCE_LIMIT){
+
+		cout <<	"Warning : forceFB2 is exceed maximum limit \n";
+		forceFB2[0] = 0 ;
+		forceFB2[1] = 0; 
+		forceFB2[2] = 0;
+	}
+
+
 
 	position = server->positionData;
 
@@ -1742,15 +1929,15 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//}
 	// send all forces to device
 	HDdouble fToD2[3] = { forceFB2[0], forceFB2[1], forceFB2[2] };
-	cout << forceFB2.length();
+
 	// send forces to the client
 	server->timestamp = currentTime;
 
 
-	//Onur comment backforce for Right Haptic hhd2
-	//server->forceData = hduVector3Dd(forceFB2[0], forceFB2[1], forceFB2[2]);
+	//Onur comment feedback for Right Haptic hhd2
+	server->forceData = hduVector3Dd(forceFB2[0], forceFB2[1], forceFB2[2]);
 
-	server->forceData = hduVector3Dd(0, 0, 0);
+	//server->forceData = hduVector3Dd(0, 0, 0);
 	server->update();
 
 
@@ -2490,96 +2677,15 @@ Vector calcBallPos()
 	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
 
 
-	float 	look_ahead_time = 0.01;
-	
-	float 	look_ahead_pos_x = cpX + (look_ahead_time * cvX);
-	float 	look_ahead_pos_z = cpZ + (look_ahead_time * cvZ);
 
-
-	float reference_point_x = 0 ;
-	float reference_point_z = 0 ;
-
-
-	//Transformation of coordinate system from Haptic to onur code 
-	//Dont even think about to change without saving somewhere 
-	//Code work right,3 times checked
-	double Xsrc_min = -100;	//MazeGame x axis min left-right
-	double Xsrc_max = +100;	//MazeGame x axis max left-right
-	double Zsrc_min = -41;	//MazeGame z axis min up-down
-	double Zsrc_max = +41;	//MazeGame z axis max up-down
-
-	double Xres_min = 0;	//Onur Code x axis min up-down
-	double Xres_max = +82;  //Onur Code x axis max up-down
-	double Yres_min = 0;	//Onur Code y axis min left-right
-	double Yres_max = 200; //Onur Code y  axis max left-right
-
-
-	//up down transformation
-	double res_x =  ( look_ahead_pos_z - Zsrc_min) / (Zsrc_max -Zsrc_min) * (Xres_max - Xres_min) + Xres_min;
-
-
-	//left right transformation
-	double res_y =  ( look_ahead_pos_x - Xsrc_min) / ( Xsrc_max - Xsrc_min) * ( Yres_max - Yres_min ) + Yres_min;
-
-	std::pair<int,int> minRef = closestLinePoint(res_x,res_y);
-
-
-	//points which have minimum distance to the given point, but in the onur coordinate system 
-	float onur_reference_point_x = std::get<0>(minRef);
-	float onur_reference_point_y = std::get<1>(minRef);
 	
 
 
+	forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
+	+ kpHN*(cpX-hcpX) + kdN*(cvX-hcvX)+fcw[0] + boundaryforceCX;
 
-	//Transformation of coordinate system from onur code  to haptic  
-	//Dont even think about to change without saving somewhere 
-	//Code work right,3 times checked
-
-	 Xsrc_max = 82;	//Onur Code x axis max up-down 
-	 Xsrc_min = 0;	//Onur Code x axis min up-down
-	double  Ysrc_max = 200;	//Onur Code y axis max left-right
-	double  Ysrc_min = 0;	//Onur Code y axis min left-right
-
-
-
-	 Xres_min = -100; //MazeGame x axis min left-right 
-	 Xres_max = +100;	//MazeGame x axis max left-right
-	double  Zres_min = -41;	//MazeGame z axis min up-down
-	double  Zres_max = +41;	//MazeGame z axis max up-down
-
-
-	//Points  which have minimum distance to the given point, in the maze game coordinate system
-	
-	//left_right
-	reference_point_x = ((  onur_reference_point_y - Ysrc_min ) / ( Ysrc_max - Ysrc_min ) * (Xres_max - Xres_min) + Xres_min);
-	
-	//up_down
-	reference_point_z = (( onur_reference_point_x - Xsrc_min ) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min ) + Zres_min );  
-
-
-	Algorithm_force.at(0) = 0.8 * ( look_ahead_pos_x - reference_point_x);
-	Algorithm_force.at(2) = 0.8 * ( look_ahead_pos_z - reference_point_z);
-
-
-
-
-
-
-	//Onur Left haptic working right haptic is my algorithm
-	forceBall[0] = kpHN*(hpX - hhpX) + kdN*(hvX - hhvX)
-		+  /*deviceden gelen force u 0 la yerine benim algorithmamýn ürettiði forcu koy*/ /* kpHN*(cpX - hcpX) + kdN*(cvX - hcvX) */  Algorithm_force.at(0) + fcw[0] + boundaryforceCX;
-	
-	forceBall[2] = kpHN*(hpZ - hhpZ) + kdN*(hvZ - hhvZ)
-		+/*Onur Right(Device HHD2 ) deviceden gelen force u 0 la yerine benim algorithmamýn ürettiði forcu koy */ /* kpHN*(cpZ - hcpZ) + kdN*(cvZ - hcvZ) */ Algorithm_force.at(2) + fcw[2] + boundaryforceCZ;
-	//Onur
-
-
-	// Force'un eski hali
-	//forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
-	//+ kpHN*(cpX-hcpX) + kdN*(cvX-hcvX)+fcw[0] + boundaryforceCX;
-
-	//forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
-	//+kpHN*(cpZ-hcpZ) + kdN*(cvZ-hcvZ)+fcw[2] + boundaryforceCZ; 
+	forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
+	+kpHN*(cpZ-hcpZ) + kdN*(cvZ-hcvZ)+fcw[2] + boundaryforceCZ; 
 
 	//Onur
 	
@@ -3908,7 +4014,7 @@ void serverLoop(void * arg)
 //return nonCollidingBallPos;
 //}
 
-std::pair<int,int> closestLinePoint(int point_x, int point_y) {
+std::pair<int,int> closestLinePoint(float point_x, float point_y) {
 
 	
 	float y = 0;

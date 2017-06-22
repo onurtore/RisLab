@@ -267,7 +267,7 @@ int main(int argc, char **argv)
 	cout << "Fourth Step Done - Path Calculated" << "\n\n";
 	path.pathImprove();
 	cout << "Fifth Step Done - Path Improved" << "\n\n";
-	path.selectPath(0);
+	path.selectPath(1);
 	cout << "Sixth Step Done - Path Selected" << "\n\n";
 	for (int i = 0; i <  path.dtargetsX.size(); i++) {
 		path.isVisited.push_back(false);
@@ -927,7 +927,6 @@ void GenerateDefaultGraphics(SoSeparator * root)
 	graphCtrller->addBoard();
 
 	/*
-		Below code draw the path
 	//Onur 
 	if (firstTime) {
 
@@ -950,25 +949,11 @@ void GenerateDefaultGraphics(SoSeparator * root)
 			graphCtrller->addBall(res_x,res_z);
 		}
 	}
-	
+	*/
 
-	double Xsrc_max = 82;	//Onur Code x axis max up-down 
-	double Xsrc_min = 0;	//Onur Code x axis min up-down
-	double Ysrc_max = 200;	//Onur Code y axis max left-right
-	double Ysrc_min = 0;	//Onur Code y axis min left-right
-
-
-
-	double Xres_min = -100; //MazeGame x axis min left-right 
-	double Xres_max = +100;	//MazeGame x axis max left-right
-	double Zres_min = -41;	//MazeGame z axis min up-down
-	double Zres_max = +41;	//MazeGame z axis max up-down
-	double res_z = ((path.dtargetsX.at(path.dtargetsX.size() - 1) - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-	double res_x = ((path.dtargetsY.at(path.dtargetsY.size() - 1) - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
-	//graphCtrller->addBall(res_x, res_z);
 
 	//Onur
-		*/
+		
 
 	if(dataRec->scenario == MIXED)
 		graphCtrller->addWall();
