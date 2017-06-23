@@ -888,7 +888,7 @@ int main(int argc, char **argv)
 	myCamera2->position.setValue(SHIFT_X, 160, 1+SHIFT_Z/*BOARD_WIDTH+20/* 100, 200*/);
 	myCamera2->pointAt(SbVec3f(SHIFT_X, -125, -1+SHIFT_Z/*-20/* -100, -200*/));
 	myViewer2->saveHomePosition();
-	myViewer2->setTitle("Yeditepe University RML - Maze Game - Player 2");
+	myViewer2->setTitle("Yeditepe University - Maze Game - Player 2");
 	myViewer2->setSize(SbVec2s(screenWidth/*2560*/, screenHeight));
 	myViewer2->setDecoration(FALSE);
 	myViewer2->setFullScreen(FALSE);//TRUE);

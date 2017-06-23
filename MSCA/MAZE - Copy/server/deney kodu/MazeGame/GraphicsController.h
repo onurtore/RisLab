@@ -62,7 +62,8 @@ public:
 	void addBall();
 	//Onur
 	void addBall(double x, double y);
-	void addPathCube(double x,double y);
+	void addPathCube();
+	void changePathCubePos(float x,float z);
 	//Onur
 	void addInterfacePoints();
 	void addBoard();

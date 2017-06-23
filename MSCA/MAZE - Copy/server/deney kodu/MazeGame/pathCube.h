@@ -1,3 +1,12 @@
+/*
+Yeditepe University - RIS Laboratary 
+
+Authors : Onur Berk Töre
+
+Below code written for showing cube on the path while
+playing the game.
+*/
+
 #pragma once
 #include "Public.h"
 #include <Inventor/nodes/SoSeparator.h>
@@ -11,6 +20,8 @@ class  pathCube
 {
 public:
 
+	float posX,posY,posZ;
+
 	SoTransform *transfMat;
     SoTransform *transf;
 	SoTransform *transfn;
@@ -19,8 +30,8 @@ public:
 	SoCube *shape;
 	SoSphere *ips;
 	SoMaterial *mat;
-	SoMaterial *mat1;
-	SoMaterial *mat2;
+//	SoMaterial *mat1;
+//	SoMaterial *mat2;
 	float ballWidth;
 	float ballDepth;
 	float ballHeight;
@@ -28,7 +39,7 @@ public:
 	pathCube(SoSeparator *root, Point position, float width,float height,float depth,float radius, float mass, Vector color);
 	 
 	void setTranslate(Vector tr);
-	void setPosition(Point pt);
+	void setPosition(float x,float z);
 	void incrementPosition(Point pt);
 	void setVelocity(Vector vel);
 	void setAcceleration(Vector vel);

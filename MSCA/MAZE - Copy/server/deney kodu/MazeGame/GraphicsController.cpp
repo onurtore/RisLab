@@ -34,7 +34,7 @@ GraphicsController::GraphicsController(int scenario, int cond)
 	wall1 = new Wall(wallHeight, wallWidth, wallDepth ,wallTx,wallTy,wallTz);
 	wall2 = new Wall(wallHeight, wallWidth23, wallDepth23 ,wallTx2,wallTy,wallTz2);
 	wall3 = new Wall(wallHeight, wallWidth23, wallDepth23 ,wallTx3,wallTy,wallTz3);
-	
+	addPathCube();
 
 }
 
@@ -64,10 +64,16 @@ void GraphicsController::addBall(double x , double z) {
 
 }
 
-void GraphicsController::addPathCube(double x,double z){
-	//maybe i should change name to pathCubeGr because i dont want any physical interaction between this thing.Just the graphic
-	mypathCube = new pathCube(root1, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
-	mypathCube = new pathCube(root2, Point(x, 0.8f, z), 2.0f, 1.0f, 5, 5, 5, Vector(50, 50,50));
+void GraphicsController::addPathCube(){
+	
+	mypathCube = new pathCube(root1, Point(0, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 50,50));
+	mypathCube2 = new pathCube(root2, Point(0, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 50,50));
+}
+
+void GraphicsController::changePathCubePos(float x,float z){
+
+	mypathCube->setPosition(x,z);
+	mypathCube2->setPosition(x,z);
 }
 
 

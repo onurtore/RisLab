@@ -756,8 +756,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 
 
-
-		
+		graphCtrller->mypathCube->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
 		
 	
 		//calculate force
