@@ -7,6 +7,7 @@
 /////////////////////////////////////////////////////////////////
 #include <fstream>
 #include "Public.h"
+
 #include "HapticCallBack.h"
 #include "MathCB.h"
 #include "HapticInterfacePoint.h"
@@ -15,6 +16,9 @@
 //Onur Path Finder function
 #include "wheretoGo.h"
 #include "baseChange.h"
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
 // FUNCTION PROTOTYPES
 void myKeyPressCB(void *, SoEventCallback *);
 void MyHandleClose(void *,class SoWinComponent *);
@@ -252,6 +256,7 @@ void createLine(int x1, int y1,int x2, int y2) {
 
 	return;
 }
+
 
 int main(int argc, char **argv)
 {
@@ -950,12 +955,27 @@ void GenerateDefaultGraphics(SoSeparator * root)
 			cout << res_x << "\t" << res_z << "\n";
 			graphCtrller->addBall(res_x,res_z);
 		}
+
+
+		
+		double  res_z = ((40 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
+		double res_x = ((38 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
+		
+
+		cout << "Start Point : " << res_x << "\t" << res_z << "\n";
+
+
+		res_z = ((16 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
+		res_x = ((178 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
+		
+
+		cout << "End Point : " << res_x << "\t" << res_z <<"\n";
 	}
 	
+	
 	*/
-
 	//Onur
-		
+
 
 	if(dataRec->scenario == MIXED)
 		graphCtrller->addWall();

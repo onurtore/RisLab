@@ -19,8 +19,10 @@ Date: Jul. 22, 2013
 #include "BgTimer.h"
 #include <fstream>
 #include "SoundPlayerThread.h"
-
-
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
 //Onur
 #include "baseChange.h" //Base Change for 2D coordinate systems
 #include "wheretoGo.h" // Path Finder Algorithm ( WaweFront + Potantiel Field) 
@@ -381,14 +383,24 @@ void serverLoop(void * arg);
 
 	int CorrectPosition(int placeHolder);
 
+void writeToFile(string filename,string output) {
 
+	ofstream out;
+	out.open(filename,ios::app);
+
+	out << output << "\n";
+	
+	out.close();
+}
 
 
 int CorrectPosition(int placeHolder)
 {
 
 	
-	if(placeHolder > old_place_holder){
+	if(placeHolder - old_place_holder == 1 ){
+
+
 		old_place_holder = placeHolder;
 
 		return placeHolder;
@@ -748,7 +760,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		double ECZres_min = -41;	//MazeGame z axis min up-down
 		double ECZres_max = +41;	//MazeGame z axis max up-down
 
-		double minDistance = 9999;
+		double minDistance = 9999999999;
 		double x_diff = 0;
 		double y_diff = 0;
 		
@@ -763,20 +775,21 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			
 
 
-			x_diff = res_x - bpX;
-			y_diff = res_z - bpZ;
+			x_diff = abs(res_x - bpX);
+			y_diff = abs(res_z - bpZ);
 
 
-			distance = sqrt(pow(x_diff,2) + pow(y_diff,2) );
+			distance = sqrt( ( x_diff * x_diff )  + (y_diff * y_diff) );
 
-			
-			if(distance < 10 ){
+			if(distance < 19 ){
 
 				continue;
 			}
 
 			else{
 				if(distance < minDistance ){
+
+					
 					minDistance = distance;
 					place_holder = i;
 				}
@@ -785,12 +798,22 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		}
 
 		place_holder = CorrectPosition(place_holder);
+		
+		string myString = std::to_string(long double (bpX)) + "\t" + std::to_string(long double(bpZ)) + "\t" + std::to_string(long double  (place_holder));
+		writeToFile("onur.txt",myString);
+
+
 
 
 
 		ECGO_z = ((path.dtargetsX.at(place_holder) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
 		ECGO_x = ((path.dtargetsY.at(place_holder) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
-			
+		
+		x_diff = ECGO_x - bpX;
+		y_diff = ECGO_z - bpZ;
+
+		distance = sqrt(pow(x_diff,2) + pow(y_diff,2) );
+
 
 
 
@@ -820,12 +843,13 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 
 		onurRUNS++;
-		if(onurRUNS %4000 == 0 ){
-              cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
+		//if(onurRUNS %100 == 0 ){
+            //cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
+		      cout << "Distance is : " << distance << "\n" ; 
 			//cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
 			//cout << "cpx is:" << cpX <<"\t" << "cpz is:" << cpZ <<"\n";
 			//cout << "algorithm_force_x:" << algorithm_force_x << "\t" << "algorithm_force_z:" << algorithm_force_z << "\n";
-		}
+		//}
 		//if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
 			
 		//	cout << "Warning : Algorithm forces are zero \n";
