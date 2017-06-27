@@ -197,9 +197,9 @@ const float COEFFICIENT_FRICTION_ROT             = 0.19f;
 const float COEFFICIENT_FRICTION_STATIC   = 0.0f;
 const float COEFFICIENT_FRICTION_ROT      = 0.0f;
 #endif
-
+#define DYNAMIC_FRICTION_ON
 #ifdef DYNAMIC_FRICTION_ON
-const float COEFFICIENT_FRICTION_DYNAMIC  = 1.0f;
+const float COEFFICIENT_FRICTION_DYNAMIC  = 2.0f;
 #else
 const float COEFFICIENT_FRICTION_DYNAMIC  = 0.0f;
 #endif

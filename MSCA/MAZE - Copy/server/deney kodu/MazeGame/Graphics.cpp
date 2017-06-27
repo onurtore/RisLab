@@ -267,7 +267,7 @@ int main(int argc, char **argv)
 	cout << "Fourth Step Done - Path Calculated" << "\n\n";
 	path.pathImprove();
 	cout << "Fifth Step Done - Path Improved" << "\n\n";
-	path.selectPath(1);
+	path.selectPath(0);
 	cout << "Sixth Step Done - Path Selected" << "\n\n";
 	for (int i = 0; i <  path.dtargetsX.size(); i++) {
 		path.isVisited.push_back(false);
@@ -928,7 +928,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 
 	
 	//Onur 
-	/*
+	
 	if (firstTime) {
 
 		double Xsrc_max = 82;	//Onur Code x axis max up-down 
@@ -952,7 +952,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 		}
 	}
 	
-	*/
+	
 
 	//Onur
 		
