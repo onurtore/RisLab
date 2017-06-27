@@ -66,7 +66,8 @@ public:
 	float  getHeight();
 	float  getRadius();
 	float  getMass();
-	
+	float  getPositionX();
+	float  getPositionZ();
 	void  calculateAngleBallGr(Vector f1,Vector f2);
 	float  calculateAngleBallGr_col(Vector f1,Vector f2);
 	float  getAngleBallGr();

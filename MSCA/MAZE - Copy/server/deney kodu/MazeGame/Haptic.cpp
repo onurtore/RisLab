@@ -564,6 +564,7 @@ Callback for haptic loop.
 *******************************************************************************/
 HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 {
+
 	fhw = Vector(0.0, 0.0, 0.0);
 	fcw = Vector(0.0, 0.0, 0.0);
 
@@ -612,7 +613,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		fright = fnet - f_left
 		*/
 
-	
+		isWarning                    = false;
 		float k_stiffness            = 0.06;
 		float look_ahead_x           = 0;
 		float look_ahead_z           = 0;
@@ -624,8 +625,9 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		float onur_reference_point_y = 0;
 		float reference_point_x      = 0;
 		float reference_point_z      = 0;
-		float 	old_ECGO_x = 0;
-		float 	old_ECGO_z = 0;
+		float old_ECGO_x             = 0;
+		float old_ECGO_z             = 0;
+
 		//Get Values
 		graphCtrller->ballGr->getPosition().getValue(bpX,bpY,bpZ);
 		graphCtrller->ballGr->getVelocity().getValue(bvX,bvY,bvZ);
@@ -633,9 +635,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		graphCtrller->handleH.getVelocity().getValue(hhvX, hhvY, hhvZ);
 
 		Point x = graphCtrller->cip.getPosition();
-		cpX = x[0];
-		cpY = x[1];
+		
+		cpX  = x[0];
+		cpY  = x[1];
 		cpZ  = x[2];
+		
 		if(bpX == 0 && bpY == 0 && bpZ == 0  && isWarning == false){
 			cout << "Warning: ball position data is zero\n";
 			isWarning = true;
@@ -652,7 +656,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		look_ahead_x = bpX + (t_look_ahead * bvX);
 		look_ahead_z = bpZ + (t_look_ahead * bvZ); 
 
-		if(look_ahead_x == 0 && look_ahead_x == 0 && isWarning == false){
+		if(look_ahead_x == 0 && look_ahead_z == 0 && isWarning == false){
 
 			cout << "Warning: look ahead position is zero\n";
 			isWarning = true;
@@ -726,7 +730,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		if(reference_point_x == 0 && reference_point_z == 0  && isWarning == false){
 
 			cout << "Warning : Reference Points are zero \n";
-		
+			isWarning = true;
 
 		}
 		
@@ -791,8 +795,12 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 
 		//Error Check
-		graphCtrller->mypathCube->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
-		
+		if(onurRUNS %30 == 0){
+			graphCtrller->mypathCube->setPosition(ECGO_x,ECGO_z);
+			graphCtrller->mypathCube2->setPosition(ECGO_x,ECGO_z);
+			//graphCtrller->mypathCube->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
+			//graphCtrller->mypathCube2->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
+		}
 		
 
 		//Calculate the points by formula
@@ -813,10 +821,10 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 		onurRUNS++;
 		if(onurRUNS %4000 == 0 ){
-			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-			cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
-			cout << "cpx is:" << cpX <<"\t" << "cpz is:" << cpZ <<"\n";
-			cout << "algorithm_force_x:" << algorithm_force_x << "\t" << "algorithm_force_z:" << algorithm_force_z << "\n";
+              cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
+			//cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
+			//cout << "cpx is:" << cpX <<"\t" << "cpz is:" << cpZ <<"\n";
+			//cout << "algorithm_force_x:" << algorithm_force_x << "\t" << "algorithm_force_z:" << algorithm_force_z << "\n";
 		}
 		//if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
 			
@@ -2018,7 +2026,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	if(onurRUNS %4000 == 0 ){
 			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-			cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n";
+			//cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n";
 	}
 	fMag = forceFB2.length();
 	if (fMag > FORCE_LIMIT)
@@ -2038,7 +2046,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	*/
 	if(onurRUNS %4000 == 0 ){
 			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-			cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n\n";
+			//cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n\n";
 	}
 
 

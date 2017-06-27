@@ -87,3 +87,15 @@ void pathCube::setPosition(float x,float z){
 	posX = x;
 	posZ = z;
 }
+
+float  pathCube::getPositionX(){
+
+	return posX;
+
+}
+
+float  pathCube::getPositionZ(){
+
+	return posZ;
+
+}

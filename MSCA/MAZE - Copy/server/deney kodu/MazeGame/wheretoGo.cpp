@@ -24,7 +24,7 @@ wheretoGo::wheretoGo(){
 	currentTarget		=	0;
 	targetCounter		=	0;
 	matrixHeight		=	82;
-	matrixWidth			=	250;
+	matrixWidth			=	200;
 	pointvelx			=	0;
 	pointvely			=	0;
 	forceCounter		=	1;

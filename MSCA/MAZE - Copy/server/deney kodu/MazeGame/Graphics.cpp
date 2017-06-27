@@ -928,7 +928,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 
 	
 	//Onur 
-	
+	/*
 	if (firstTime) {
 
 		double Xsrc_max = 82;	//Onur Code x axis max up-down 
@@ -952,7 +952,7 @@ void GenerateDefaultGraphics(SoSeparator * root)
 		}
 	}
 	
-	
+	*/
 
 	//Onur
 		
@@ -1097,6 +1097,20 @@ void graphicsTimerCallback(void *data, SoSensor *)
 	{
 		// AYSE: warning text in the middle of screen
 		messageText->string.setValue(messageString.c_str());
+
+		//Onur path Cube position
+		//Acemi kod nasýl anlaþýlýr
+		float pathCube_x = 0;
+		float pathCube_z = 0;
+
+		//böyle anlaþýlýr :D
+		pathCube_x = graphCtrller->mypathCube->getPositionX();
+		pathCube_z = graphCtrller->mypathCube->getPositionZ();
+
+		graphCtrller->mypathCube->transfMat->translation.setValue(pathCube_x,0.8f,pathCube_z);
+		graphCtrller->mypathCube2->transfMat->translation.setValue(pathCube_x,0.8f,pathCube_z);
+
+
 
 
 		float bpX, bpY, bpZ, cpX, cpY, cpZ, npX, npY, npZ, hpX, hpY, hpZ,alpha;
