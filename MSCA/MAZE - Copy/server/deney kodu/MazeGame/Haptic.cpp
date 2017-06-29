@@ -23,11 +23,14 @@ Date: Jul. 22, 2013
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+
 //Onur
 #include "baseChange.h" //Base Change for 2D coordinate systems
 #include "wheretoGo.h" // Path Finder Algorithm ( WaweFront + Potantiel Field) 
 #include <vector>
 #include "public2.h"
+#include <sstream>
+
 
 // initial position 
 // TODO: input from user
@@ -388,9 +391,17 @@ void writeToFile(string filename,string output) {
 	ofstream out;
 	out.open(filename,ios::app);
 
-	out << output << "\n";
+	out << output;
 	
 	out.close();
+}
+
+std::string ConvertO(float number){
+
+	std::ostringstream buff;
+    buff<<number;
+    return buff.str();   
+
 }
 
 
@@ -630,7 +641,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		float look_ahead_x           = 0;
 		float look_ahead_z           = 0;
 		float bvX = 0, bvY = 0, bvZ  = 0;
-		float t_look_ahead           = 0.01;
+		float t_look_ahead           = 0.001;
 		float res_x                  = 0;
 		float res_y                  = 0;
 		float onur_reference_point_x = 0;
@@ -708,12 +719,12 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		*/
 
 		//Transform Haptic coordinate points of look_ahead position to  Onur Coordinate System points
-
+		/*
 			//up down transformation
 			res_x = ( look_ahead_x - HOZsrc_min) / (HOZsrc_max -HOZsrc_min) * (HOXres_max - HOXres_min) + HOXres_min;
 			//left right transformation
 			res_y = ( look_ahead_x - HOXsrc_min) / ( HOXsrc_max - HOXsrc_min) * ( HOYres_max - HOYres_min ) + HOYres_min;
-
+		
 
 		//Calculate closest point to path
 		std::pair<int,int> minRef = closestLinePoint(res_x,res_y);
@@ -745,7 +756,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			isWarning = true;
 
 		}
-		
+		*/
 		//Error Check 2
 
 		double ECXsrc_max = 82;	//Onur Code x axis max up-down 
@@ -768,6 +779,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		double ECGO_x = 0;
 		double ECGO_z = 0;
 		int place_holder = 0;
+
 
 		for (int i = 0; i < path.dtargetsX.size(); i++) {
 			double res_z = ((path.dtargetsX.at(i) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
@@ -799,9 +811,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 		place_holder = CorrectPosition(place_holder);
 		
-		string myString = std::to_string(long double (bpX)) + "\t" + std::to_string(long double(bpZ)) + "\t" + std::to_string(long double  (place_holder));
-		writeToFile("onur.txt",myString);
-
+	
 
 
 
@@ -818,12 +828,12 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 
 		//Error Check
-		if(onurRUNS %30 == 0){
+
 			graphCtrller->mypathCube->setPosition(ECGO_x,ECGO_z);
 			graphCtrller->mypathCube2->setPosition(ECGO_x,ECGO_z);
 			//graphCtrller->mypathCube->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
 			//graphCtrller->mypathCube2->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
-		}
+		
 		
 
 		//Calculate the points by formula
@@ -837,19 +847,22 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//	algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
 	//	algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
 
-		algorithm_force_x =  -k_stiffness * (look_ahead_x - ECGO_x) +  ( hvX ) * kdN;
+		algorithm_force_x =  -k_stiffness * (look_ahead_x - ECGO_x) +  ( hvX  ) * kdN;
 		algorithm_force_z =  -k_stiffness * (look_ahead_z - ECGO_z) +  ( hvZ ) * kdN;
 
-
-
 		onurRUNS++;
-		//if(onurRUNS %100 == 0 ){
-            //cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-		      cout << "Distance is : " << distance << "\n" ; 
+
+
+	
+		string s =  ConvertO(algorithm_force_x) + ' ' + ConvertO(algorithm_force_z) + ' ';
+		writeToFile("onur2.txt",s);
+
+
+			
 			//cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
 			//cout << "cpx is:" << cpX <<"\t" << "cpz is:" << cpZ <<"\n";
 			//cout << "algorithm_force_x:" << algorithm_force_x << "\t" << "algorithm_force_z:" << algorithm_force_z << "\n";
-		//}
+		
 		//if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
 			
 		//	cout << "Warning : Algorithm forces are zero \n";
@@ -2047,17 +2060,24 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//onur change values
 	forceFB2[0] = algorithm_force_x;
 	forceFB2[2] = algorithm_force_z;
-
+	/*
 	if(onurRUNS %4000 == 0 ){
 			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
 			//cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n";
 	}
+	*/
 	fMag = forceFB2.length();
 	if (fMag > FORCE_LIMIT)
 	{	
+		cout << "Get Scaled" << onurRUNS << "\n";
 		forceFB2 = (forceFB2 / fMag) * FORCE_LIMIT;
 	}
 	forceFB2 = F_SCALE_FACTOR * forceFB2;
+	if( ( (runs > timeToGoInit+wait) && (trialNo == 1) ) || (trialNo!=1) ) {
+		string s = ConvertO(forceFB2[0]) + ' ' +  ConvertO(forceFB2[2]) + '\n';
+		writeToFile("onur2.txt",s);
+	}
+
 
 	/*
 	//Onur 
@@ -2068,10 +2088,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		forceFB2[2] = 0;
 	}
 	*/
+	/*
 	if(onurRUNS %4000 == 0 ){
 			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
 			//cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n\n";
-	}
+	}*/
 
 
 	position = server->positionData;

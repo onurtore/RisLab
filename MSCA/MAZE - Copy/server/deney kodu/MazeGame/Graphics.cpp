@@ -936,28 +936,29 @@ void GenerateDefaultGraphics(SoSeparator * root)
 	/*
 	if (firstTime) {
 
-		double Xsrc_max = 82;	//Onur Code x axis max up-down 
-		double Xsrc_min = 0;	//Onur Code x axis min up-down
-		double Ysrc_max = 200;	//Onur Code y axis max left-right
-		double Ysrc_min = 0;	//Onur Code y axis min left-right
+		double ECXsrc_max = 82;	//Onur Code x axis max up-down 
+		double ECXsrc_min = 0;	//Onur Code x axis min up-down
+		double ECYsrc_max = 200;	//Onur Code y axis max left-right
+		double ECYsrc_min = 0;	//Onur Code y axis min left-right
 
 
 
-		double Xres_min = -100; //MazeGame x axis min left-right 
-		double Xres_max = +100;	//MazeGame x axis max left-right
-		double Zres_min = -41;	//MazeGame z axis min up-down
-		double Zres_max = +41;	//MazeGame z axis max up-down
+		double ECXres_min = -100; //MazeGame x axis min left-right 
+		double ECXres_max = +100;	//MazeGame x axis max left-right
+		double ECZres_min = -41;	//MazeGame z axis min up-down
+		double ECZres_max = +41;	//MazeGame z axis max up-down
+
 
 		for (int i = 0; i < path.dtargetsX.size(); i++) {
-			double res_z = ((path.dtargetsX.at(i) - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-			double res_x = ((path.dtargetsY.at(i) - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
+			double res_z = ((path.dtargetsX.at(i) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
+			double res_x = ((path.dtargetsY.at(i) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
 			
 			cout << res_x << "\t" << res_z << "\n";
-			graphCtrller->addBall(res_x,res_z);
+			graphCtrller->addPathCube(res_x,res_z);
 		}
 
-
-		
+		*/
+		/*
 		double  res_z = ((40 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
 		double res_x = ((38 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
 		
@@ -970,10 +971,12 @@ void GenerateDefaultGraphics(SoSeparator * root)
 		
 
 		cout << "End Point : " << res_x << "\t" << res_z <<"\n";
-	}
+		*/
+		
+	//}
 	
+
 	
-	*/
 	//Onur
 
 

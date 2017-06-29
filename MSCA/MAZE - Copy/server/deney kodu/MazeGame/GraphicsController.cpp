@@ -70,6 +70,14 @@ void GraphicsController::addPathCube(){
 	mypathCube2 = new pathCube(root2, Point(0, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 50,50));
 }
 
+
+void GraphicsController::addPathCube(float x,float z){
+	
+	mypathCube = new pathCube(root1, Point(x, 0.8f, z), 2.0f, 3.0f, 5, 5, 5, Vector(100, 100,100));
+	mypathCube2 = new pathCube(root2, Point(x, 0.8f, z), 2.0f, 3.0f, 5, 5, 5, Vector(100, 100,100));
+}
+
+
 void GraphicsController::changePathCubePos(float x,float z){
 
 	mypathCube->setPosition(x,z);
