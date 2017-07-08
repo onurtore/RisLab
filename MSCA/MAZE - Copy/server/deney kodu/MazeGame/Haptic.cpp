@@ -637,11 +637,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		*/
 
 		isWarning                    = false;
-		float k_stiffness            = 0.06;
+		float k_stiffness            = 0.09;
 		float look_ahead_x           = 0;
 		float look_ahead_z           = 0;
 		float bvX = 0, bvY = 0, bvZ  = 0;
-		float t_look_ahead           = 0.001;
+		float t_look_ahead           = 0.01;
 		float res_x                  = 0;
 		float res_y                  = 0;
 		float onur_reference_point_x = 0;
@@ -787,8 +787,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			
 
 
-			x_diff = abs(res_x - bpX);
-			y_diff = abs(res_z - bpZ);
+			x_diff = abs(res_x - look_ahead_x);
+			y_diff = abs(res_z - look_ahead_z);
 
 
 			distance = sqrt( ( x_diff * x_diff )  + (y_diff * y_diff) );
@@ -847,14 +847,14 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//	algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
 	//	algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
 
-		algorithm_force_x =  -k_stiffness * (look_ahead_x - ECGO_x) +  ( hvX  ) * kdN;
-		algorithm_force_z =  -k_stiffness * (look_ahead_z - ECGO_z) +  ( hvZ ) * kdN;
+		algorithm_force_x = (-k_stiffness * (look_ahead_x - ECGO_x) +  ( hvX  ) * kdN ) * 1  ;
+		algorithm_force_z = (-k_stiffness * (look_ahead_z - ECGO_z) +  ( hvZ ) * kdN ) * 8 ; 
 
 		onurRUNS++;
 
 
 	
-		string s =  ConvertO(algorithm_force_x) + ' ' + ConvertO(algorithm_force_z) + ' ';
+		string s =  ConvertO(x_diff) + ' ' + ConvertO(y_diff) + ' ' + ConvertO(algorithm_force_x) + ' ' + ConvertO(algorithm_force_z) + '\n' ;
 		writeToFile("onur2.txt",s);
 
 
@@ -1241,8 +1241,12 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			force1[2] = forceFB1[2];//-f_forceZ;
 			force2[0] = forceFB2[0];//-f_forceX;
 			force2[2] = forceFB2[2];//-f_forceZ;
+			//onur nothing changed
+			//force2[0] = algorithm_force_x;//-f_forceX;
+			//force2[2] = algorithm_force_z;//-f_forceZ;
 
 
+			
 			//Onur 
 			/*
 			Hangi force hangi forcea bakal�m
@@ -1966,7 +1970,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			//Ik�nci hapti�in forcu
 			//Buna benim algoritmam�n �retti�i forcu ekleyelim ? 
 			force2[0] = forceFB2[0] - f_forceX;
-			force2[2] = forceFB2[2] - f_forceZ;
+			force2[2] = forceFB2[2] - f_forceX;
+	
+			//Onur nothing chanfe
+			//		force2[0] = algorithm_force_x - f_forceX;
+	//		force2[2] = algorithm_force_z - f_forceZ;
 
 
 
@@ -2073,11 +2081,6 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		forceFB2 = (forceFB2 / fMag) * FORCE_LIMIT;
 	}
 	forceFB2 = F_SCALE_FACTOR * forceFB2;
-	if( ( (runs > timeToGoInit+wait) && (trialNo == 1) ) || (trialNo!=1) ) {
-		string s = ConvertO(forceFB2[0]) + ' ' +  ConvertO(forceFB2[2]) + '\n';
-		writeToFile("onur2.txt",s);
-	}
-
 
 	/*
 	//Onur 
