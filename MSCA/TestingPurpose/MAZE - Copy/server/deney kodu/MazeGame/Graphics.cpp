@@ -19,6 +19,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 // FUNCTION PROTOTYPES
 void myKeyPressCB(void *, SoEventCallback *);
 void MyHandleClose(void *,class SoWinComponent *);
@@ -256,11 +257,14 @@ void createLine(int x1, int y1,int x2, int y2) {
 
 	return;
 }
+extern void  intHandler(int dummy);
+
+
 
 
 int main(int argc, char **argv)
 {
-
+	signal(SIGINT,intHandler);
 //Onur
 	path.AddPotentialField(); // Fill the matrix with the potantiel field
 	cout << "First Step Done - Potential Field Added" << "\n\n"; 
@@ -277,13 +281,23 @@ int main(int argc, char **argv)
 	//Tahmin : Wheretogo.cpp in içinde path.isVisited'i dolduruyorum sanýrým
 	//onun için burada bir clear iþlemi yaptým.
 	path.isVisited.clear();
+	
+	path.dtargetsX.pop_back();
+	path.dtargetsX.pop_back();
+	path.dtargetsX.pop_back();
+	path.dtargetsY.pop_back();
+	path.dtargetsY.pop_back();
+	path.dtargetsY.pop_back();
+
+	
+	
 	for (int i = 0; i <  path.dtargetsX.size(); i++) {
 		path.isVisited.push_back(false);
 
 
 	}
 
-
+	
 
 
 	for (int i = 0; i+1 < path.dtargetsX.size(); i++) {
@@ -910,7 +924,7 @@ int main(int argc, char **argv)
 
 	SoWin::show(myWindow);
 	SoWin::show(myWindow2);
-	SoWin::mainLoop();
+   	SoWin::mainLoop();
 }
 
 void GenerateDefaultGraphics(SoSeparator * root)
@@ -963,26 +977,25 @@ void GenerateDefaultGraphics(SoSeparator * root)
 			graphCtrller->addPathCube(res_x,res_z);
 		}
 
-		*/
-		/*
-		double  res_z = ((40 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-		double res_x = ((38 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
+		
+		
+//		double  res_z = ((40 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
+	//	double res_x = ((38 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
 		
 
-		cout << "Start Point : " << res_x << "\t" << res_z << "\n";
+	//	cout << "Start Point : " << res_x << "\t" << res_z << "\n";
 
 
-		res_z = ((16 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
-		res_x = ((178 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
+		//res_z = ((16 - Xsrc_min) / (Xsrc_max - Xsrc_min) * (Zres_max - Zres_min) + Zres_min);
+		//res_x = ((178 - Ysrc_min) / (Ysrc_max - Ysrc_min) * (Xres_max - Xres_min) + Xres_min);
 		
-
-		cout << "End Point : " << res_x << "\t" << res_z <<"\n";
-		*/
+//	cout << "End Point : " << res_x << "\t" << res_z <<"\n";
 		
-	//}
+		
+	}
 	
 
-	
+	*/
 	//Onur
 
 

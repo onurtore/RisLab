@@ -26,7 +26,7 @@ public:
 	hduVector3Dd positionData; 	 // received from client
 	hduVector3Dd forceData;      // calculated
 	time_t timestamp;			 // timestamp of force calculation
-
+	
 	//ofstream fileOut;
 
 	

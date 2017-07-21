@@ -51,8 +51,10 @@ SoSeparator* GraphicsController::getRoot2()
 
 void GraphicsController::addBall()
 {
-	ballGr = new BallGr(root1, Point(SHIFT_X,0.8f,SHIFT_Z), BALL_WIDTH, BALL_HEIGHT, BALL_DEPTH, BALL_RADIUS, BALL_MASS, Vector(0.9f, 0.2f, 0.4f));
-	ballGr2 = new BallGr(root2, Point(SHIFT_X,0.8f,SHIFT_Z), BALL_WIDTH,BALL_HEIGHT, BALL_DEPTH, BALL_RADIUS, BALL_MASS, Vector(0.9f, 0.2f, 0.4f));
+
+	//Onur changed this to new values
+	ballGr = new BallGr(root1, Point(-90,0.8f,0), BALL_WIDTH, BALL_HEIGHT, BALL_DEPTH, BALL_RADIUS, BALL_MASS, Vector(0.9f, 0.2f, 0.4f));
+	ballGr2 = new BallGr(root2, Point(-90,0.8f,0), BALL_WIDTH,BALL_HEIGHT, BALL_DEPTH, BALL_RADIUS, BALL_MASS, Vector(0.9f, 0.2f, 0.4f));
 
 	
 }

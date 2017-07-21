@@ -70,7 +70,7 @@ public:
 	double distanceOfInfluence;
 	double targetRadius;
 	void selectPath(int i);
-	vector<double> calculateForce(double res_x, double res_y, double res_x_vel, double res_y_vel);
+	//vector<double> calculateForce(double res_x, double res_y, double res_x_vel, double res_y_vel);
 
 
 	//----------------------

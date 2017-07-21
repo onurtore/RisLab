@@ -25,7 +25,7 @@ Date: Jul. 22, 2013
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
-
+#include <cstdlib>
 //Onur
 #include "baseChange.h" //Base Change for 2D coordinate systems
 #include "wheretoGo.h" // Path Finder Algorithm ( WaweFront + Potantiel Field) 
@@ -157,6 +157,7 @@ int totalConflictTime = 0;
 // var for path vis
 int ballPathPtCnt = 0, ballPathUpdCnt = 0;
 
+
 //ofstream fp;
 
 
@@ -259,8 +260,10 @@ Vector calculateFriction();
 
 
 //Onur Bu fonksiyonun i�eri�ini de�i�tirdim
-Vector calcBallPos();
+//Vector calcBallPos();
 //Vector calcBallPos(float x,float z);
+//Vector calcBallPos(Vector);
+Vector calcBallPos(vector<float> cip_pos);
 // find the closest wall
 Vector collX(Vector ball);
 
@@ -377,14 +380,85 @@ void serverLoop(void * arg);
 		float old_reference_point_x = 0;
 		float old_reference_point_z = 0;
 
-	int onurRUNS = 0;
-	int old_place_holder = 0;
-	int new_place_holder = 0;
+	int onurRUNS                = 0;
+	int old_place_holder        = 0;
+	int new_place_holder        = 0;
+	static float OmastercpX      = 0;
+	static float OmastercpZ      = 0;
+	static float Oerror1x       = 0;
+    static float Oerror1y       = 0;
+	static float Oerror1z       = 0;
+	static float Oerror2x       = 0;
+	static float Oerror2y       = 0;
+	static float Oerror2z       = 0;
+    static float OdesiredX      = 0;
+	static float OdesiredY      = 0;
+	static float OdesiredZ      = 0;
+	static float Odx            = 0;
+	static float Ody            = 0;
+	static float Odz            = 0;
+	static float OtimeToGoalPos = 10000;
+	
+	/*Onur Functions */
 
-  /*Onur Functions */
 
+	double hip_dx = 0;
+	double hip_dy = 0;
+	double hip_dz = 0;
+
+	double cip_dx = 0;
+	double cip_dy = 0;
+	double cip_dz = 0;
+
+
+
+	double hip_desiredx = 0;
+	double hip_desiredy = 0;
+	double hip_desiredz = 0;
+
+	double hip_errorx   = 0;
+	double hip_errory   = 0;
+	double hip_errorz   = 0;
+
+	double hip_tot_errorx = 0;
+	double hip_tot_errory = 0;
+	double hip_tot_errorz = 0;
+
+
+	double cip_desiredx = 0;
+	double cip_desiredy = 0;
+	double cip_desiredz = 0;
+
+	double cip_errorx = 0;
+	double cip_errory = 0;
+	double cip_errorz = 0;
+
+	double cip_tot_errorx = 0;
+	double cip_tot_errory = 0;
+	double cip_tot_errorz = 0;
+
+
+	double hip_initialPos[3] = {-32,-109,-22};
+	double cip_initialPos[3] = {-5, -109,-35};
+	//step sizes
 
 	int CorrectPosition(int placeHolder);
+
+	bool abort_mission = false;
+	bool abort_access  = false;
+	long abort_runs    = 0;
+
+void intHandler(int dummy){
+
+
+	abort_mission = true;
+
+	while(!abort_access){
+		
+	}
+	exit(0);
+}
+
 
 void writeToFile(string filename,string output) {
 
@@ -586,10 +660,15 @@ Callback for haptic loop.
 *******************************************************************************/
 HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 {
+
+
+
+	vector<float> cipPos;
 	//onur
 	static bool enter =  false;
 
 	fhw = Vector(0.0, 0.0, 0.0);
+
 	fcw = Vector(0.0, 0.0, 0.0);
 
 	boundaryforceHX = 0.0f;
@@ -602,10 +681,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	static Vector forceFB1 = Vector(0, 0, 0);
 	static Vector forceFB2 = Vector(0, 0, 0);
 
-	static Vector onurforceFB1 = Vector(0,0,0);
-	static Vector onurforceFB2 = Vector(0,0,0);
 
+	static Vector scaled_algorithm_force = Vector(0,0,0);
 
+	static Vector hip_forceFB1 = Vector(0,0,0);
+	static Vector cip_forceFB2 = Vector(0,0,0);
 
 
 
@@ -630,8 +710,154 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	static int conflictCounter = 0;
 	
-	float algorithm_force_x      = 0;
-	float algorithm_force_z      = 0;
+	
+
+	Point myP1, myP2;
+	hduVector3Dd pos;
+	//hduVector3Dd vel;
+	hdMakeCurrentDevice(effect->hHD1);
+	hdGetDoublev(HD_CURRENT_POSITION, pos);
+	// velocities are calculated, not read from devices
+	//hdGetDoublev(HD_CURRENT_VELOCITY, vel);
+
+	myP1.setValue((float)pos[0], (float)pos[1], (float)(pos[2])/**1.5f*/);
+
+	hpX = myP1[0];
+	hpY = myP1[1];
+	hpZ = myP1[2];
+
+
+
+
+	// velocities are calculated, not read from devices
+	//hipvX = vel[0];
+	//hipvY = vel[1];
+	//hipvZ = vel[2];
+
+	// AYSE SERVER CODE commented
+	//hdMakeCurrentDevice(effect->hHD2);
+	//hdGetDoublev(HD_CURRENT_POSITION, pos);
+	//hdGetDoublev(HD_CURRENT_VELOCITY, vel);
+
+//Onur -> no need that
+	pos = server->positionData;
+	//vel = server->velocityData;
+
+	myP2.setValue((float)pos[0], (float)pos[1], (float)(pos[2])/**1.5f*/);
+	cpX = myP2[0];
+
+		cpY = myP2[1];
+	cpZ = myP2[2];
+
+
+
+
+//This code written for block haptic device for falling free.
+	if(abort_mission == true){
+		
+
+		if(abort_runs == 0){
+
+			hip_desiredx = hpX;
+			hip_desiredy = hpY;
+			hip_desiredz = hpZ;
+
+			cip_desiredx = cpX;
+			cip_desiredy = cpY;
+			cip_desiredz = cpZ;
+
+			hip_dx = ( ( hip_initialPos[0] - hpX ) / 7000);
+			hip_dy = ( ( hip_initialPos[1] - hpY ) / 7000);
+			hip_dz = ( ( hip_initialPos[2] - hpZ ) / 7000);
+
+			cip_dx = ( ( cip_initialPos[0] - cpX ) / 7000);
+			cip_dy = ( ( cip_initialPos[1] - cpY ) / 7000);
+			cip_dz = ( ( cip_initialPos[2] - cpZ ) / 7000);
+
+
+			abort_runs++;
+			return HD_CALLBACK_CONTINUE;
+		}
+
+		hip_desiredx += hip_dx;
+		hip_desiredy += hip_dy;
+		hip_desiredz += hip_dz;
+
+		cip_desiredx += cip_dx;
+		cip_desiredy += cip_dy;
+		cip_desiredz += cip_dz;
+
+		hip_errorx = hip_desiredx - hpX;
+		hip_errory = hip_desiredy - hpY;
+		hip_errorz = hip_desiredz - hpZ;
+
+		cip_errorx = cip_desiredx - cpX;
+		cip_errory = cip_desiredy - cpY;
+		cip_errorz = cip_desiredz - cpZ;
+
+		hip_tot_errorx += hip_errorx;	
+		hip_tot_errory += hip_errory;
+		hip_tot_errorz += hip_errorz;
+		
+		cip_tot_errorx += cip_errorx;	
+		cip_tot_errory += cip_errory;	
+		cip_tot_errorz += cip_errorz;	
+		
+
+
+
+		hip_forceFB1[0] =  kpHN * hip_errorx + kdN *  hip_tot_errorx ;
+		hip_forceFB1[1] =  kpHN * hip_errory + kdN *  hip_tot_errory ;
+		hip_forceFB1[2] =  kpHN * hip_errorz + kdN *  hip_tot_errorz ;
+		
+		cip_forceFB2[0] =  kpHN * cip_errorx + kdN *  cip_tot_errorx ;
+		cip_forceFB2[1] =  kpHN * cip_errory + kdN *  cip_tot_errory ;
+		cip_forceFB2[2] =  kpHN * cip_errorz + kdN *  cip_tot_errorz ;
+
+		
+		float fMag = hip_forceFB1.length();
+		if (fMag > FORCE_LIMIT)
+		{
+
+		hip_forceFB1 = (hip_forceFB1 / fMag) * FORCE_LIMIT;
+		}
+		hip_forceFB1 = F_SCALE_FACTOR * hip_forceFB1;
+
+
+
+		fMag = cip_forceFB2.length();
+		if (fMag > FORCE_LIMIT)
+		{
+
+		cip_forceFB2 = (cip_forceFB2 / fMag) * FORCE_LIMIT;
+		}
+		cip_forceFB2 = F_SCALE_FACTOR * cip_forceFB2;
+	
+			
+	
+
+	abort_runs++;
+		if(abort_runs == 7000){
+
+
+			abort_access = true;
+		}
+		
+	}
+
+	// velocities are calculated, not read from devices
+	//cipvX = vel[0];
+	//cipvY = vel[1];
+	//cipvZ = vel[2];
+
+	effect->PrintMotorTemp(aMotorTemp, gNumMotors);
+
+	//graphCtrller->hip.setVelocity( Point(hvX,hvY,hvZ));
+	//graphCtrller->cip.setVelocity( Point(cvX,cvY,cvZ));
+
+	static float algorithm_force_x      = 0;
+	static float algorithm_force_z      = 0;
+
 	if( ( (runs > timeToGoInit+wait) && (trialNo == 1) ) || (trialNo!=1) ) {
 	//Onur -> Calculate the force for the drag the  cube (ball), to the neareast point, on the path
 
@@ -645,11 +871,11 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		*/
 
 		isWarning                    = false;
-		float k_stiffness            = 0.06;
+		float k_stiffness            = 0.6f;
 		float look_ahead_x           = 0;
 		float look_ahead_z           = 0;
 		float bvX = 0, bvY = 0, bvZ  = 0;
-		float t_look_ahead           = 1.8;
+		float t_look_ahead           = 1.8f;
 		float onur_reference_point_x = 0;
 		float onur_reference_point_y = 0;
 		float reference_point_x      = 0;
@@ -663,11 +889,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		graphCtrller->hip.getVelocity().getValue(hvX, hvY, hvZ);
 		graphCtrller->handleH.getVelocity().getValue(hhvX, hhvY, hhvZ);
 
-		Point x = graphCtrller->cip.getPosition();
-		
-		cpX  = x[0];
-		cpY  = x[1];
-		cpZ  = x[2];
+		if(onurRUNS % 500 == 0)
+		cout << setw(10) <<bpX << setw(10) <<bpZ << '\n' ;
 		
 		if(bpX == 0 && bpY == 0 && bpZ == 0  && isWarning == false){
 			//cout << "Warning: ball position data is zero\n";
@@ -770,6 +993,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		double ECYsrc_max = 200;	//Onur Code y axis max left-right
 		double ECYsrc_min = 0;	//Onur Code y axis min left-right
 
+		double master_cpx = 0;
+		double master_cpz = 0;
 
 
 		double ECXres_min = -100; //MazeGame x axis min left-right 
@@ -799,17 +1024,25 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		double res_z = ((path.dtargetsX.at(lastTarget) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
 		double res_x = ((path.dtargetsY.at(lastTarget) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
 			
+		hcpX = bpX + (BALL_WIDTH)*0.5*cos(angle_rot);
+		hcpZ = bpZ - (BALL_WIDTH)*0.5*sin(angle_rot);
 
 
-		x_diff = abs(res_x - look_ahead_x);
-		z_diff = abs(res_z - look_ahead_z);
+
+		x_diff = abs(res_x - hcpX);
+		z_diff = abs(res_z - hcpZ);
 
 		distance = sqrt( ( x_diff * x_diff )  + (z_diff * z_diff) );
 
-		if(distance < 10 ){
+		//if(onurRUNS %200 == 0 ){
+		//	cout << distance << '\n';
+		//}
+
+		if(distance < 10){
 
 		
 			if(lastTarget == path.dtargetsX.size() - 1 ) {
+				
 				
 			}
 			else{
@@ -825,31 +1058,33 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		}
 
 
+
+
+
+		//Original 
 		ECGO_z = ((path.dtargetsX.at(lastTarget) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
 		ECGO_x = ((path.dtargetsY.at(lastTarget) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
 		
-		x_diff = ECGO_x - look_ahead_x;
-		z_diff = ECGO_z - look_ahead_z;
-
-		x_diff = abs(x_diff);
-		z_diff = abs(z_diff);
-
-
+		//Quick hack for the last target to become a better suited,not gonna be in here in the last version 
+		if(lastTarget == path.dtargetsX.size() -1){
+			ECGO_x = ECGO_x + (TARGET_WIDTH+ 0.5)*0.5*cos(angle_rot);
+			ECGO_z = ECGO_z - (TARGET_WIDTH )*0.5*sin(angle_rot);
+		}
 
 		
-
-		distance = sqrt(pow(x_diff,2) + pow(z_diff,2) );
-
-
-
 		//Error Check
 
-			graphCtrller->mypathCube->setPosition(ECGO_x,ECGO_z);
-			graphCtrller->mypathCube2->setPosition(ECGO_x,ECGO_z);
-			//graphCtrller->mypathCube->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
-			//graphCtrller->mypathCube2->transfMat->translation.setValue(ECGO_x,0.8f,ECGO_z);
+		graphCtrller->mypathCube->setPosition(ECGO_x,ECGO_z);
+		graphCtrller->mypathCube2->setPosition(ECGO_x,ECGO_z);
 		
 		
+		
+		//Set cip position to the target 
+		cpX = ECGO_x;
+		cpY = 0.8f;
+		cpZ = ECGO_z;
+		cipPos.push_back(cpX);
+		cipPos.push_back(cpZ);
 
 		//Calculate the points by formula
 		//graphCtrller->mypathCube->transfMat->translation.setValue(reference_point_x,0.8f,reference_point_z);
@@ -857,136 +1092,69 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		
 		//calculate force
 
-
+	
 		
 	//	algorithm_force_x = k_stiffness * (look_ahead_x - reference_point_x);
 	//	algorithm_force_z = k_stiffness * (look_ahead_z - reference_point_z);
 
-		algorithm_force_x = ( (-k_stiffness * (look_ahead_x - ECGO_x) )  +  ( hvX * kdN ) ) * 1;
-		algorithm_force_z = ( (-k_stiffness * ( ( look_ahead_z - ECGO_z)   ))  +  ( hvZ * kdN ) ) *1 ;
-
-
-		onurforceFB2[0] = algorithm_force_x;
-		onurforceFB2[2] = algorithm_force_z;
+	//algorithm_force_x = ( ( (-k_stiffness *(look_ahead_x - ECGO_x)) ))  ; //+//  ( hvX * 0.001f ))  ) *17 ;
+	//algorithm_force_z = ( ( (-k_stiffness *(look_ahead_z - ECGO_z)) ))  ;//+  ( hvZ * 0.001f ))  ) *17;
 		
-		float	onurfMag = onurforceFB2.length();
-		if (onurfMag > FORCE_LIMIT)	{
-
-		    //cout << "Get Scaled" << onurRUNS << "\n";
-		    onurforceFB2 = (onurforceFB2 / onurfMag) * FORCE_LIMIT;
-	    }
-	    
-		onurforceFB2 = F_SCALE_FACTOR * onurforceFB2;
-
-
-
-
-		string Onurforces = ConvertO(algorithm_force_x) + '\t' + ConvertO(algorithm_force_z) + '\t' + ConvertO(forceFB1[0]) + '\t' + ConvertO(forceFB1[2]) + '\n' ; 
-		writeToFile("insan_ve_algo.txt",Onurforces);
-		//string Diff = ConvertO(x_diff) + '\t' + ConvertO(z_diff) + '\t' + ConvertO(bpX) + '\t' + ConvertO(bpZ) + '\t' + ConvertO( algorithm_force_x) + '\t' + ConvertO(algorithm_force_z) + '\t'  + ConvertO(ECGO_x) + '\t' + ConvertO(ECGO_z) +  '\n';
-		//writeToFile("onurLast.txt",Diff);
-
-
-
-
-		
-
-
-
-
-
-		 //Not working - oran orantı
-		//algorithm_force_z = algorithm_force_z * ( ( 19 - ( - 31 ) )  / 5 - (-11) );
-		//Also not working
-		//algorithm_force_z = algorithm_force_z *  eulersNumber;
 	
-	/*	if(bpX > -34 && bpX < 3){
-			 
+	
+	//string os = ConvertO(bpX) + '\t' + ConvertO(bpZ) + '\t' + ConvertO(algorithm_force_x) + '\t' + ConvertO(algorithm_force_z) + '\t' + ConvertO(cip_forceFB2[0]) + '\t' + ConvertO(cip_forceFB2[2]) + '\t' + ConvertO(gen_distance) + '\t' + ConvertO(Odistance_x) + '\t' + ConvertO(Odistance_z) + '\n' ;
+	//writeToFile("evertyhing.txt",os) ;
+	
+	//other way around
+	static float OmastercpX      = 0;
+	static float OmastercpZ      = 0;
+	static float Oerror1x       = 0;
+    static float Oerror1y       = 0;
+	static float Oerror1z       = 0;
+	static float Oerror2x       = 0;
+	static float Oerror2y       = 0;
+	static float Oerror2z       = 0;
+    static float OdesiredX      = 0;
+	static float OdesiredY      = 0;
+	static float OdesiredZ      = 0;
+	static float Odx            = 0;
+	static float Ody            = 0;
+	static float Odz            = 0;
+	static float OtimeToGoalPos = 0;
 		
-			string s =  ConvertO(bpX) + '\t' + ConvertO(bpZ) + '\t' + ConvertO(ECGO_x)+ '\t'  + ConvertO(ECGO_z) + '\t'  +ConvertO(abs(x_diff)) + '\t' + ConvertO(abs(z_diff)) + '\t' + ConvertO(algorithm_force_x) + '\t' + ConvertO(algorithm_force_z) +  '\t' + ConvertO(bvX) + '\t' + ConvertO(bvZ)   + '\n';
-			writeToFile("onur200.txt",s);
-		}*/
+	//graphCtrller->handleC.getPosition().getValue(hcpX, hcpY, hcpZ);
+		
+	//	OmastercpX = - (( algorithm_force_x) / kdN)+ hcpX;
+	//	OmastercpZ = - (( algorithm_force_z) / kdN)+ hcpZ;
+
+		
+	//	Odx =  ( ( OmastercpX - cpX ) / 7000);
+	//	Odz =  ( ( OmastercpZ - cpZ ) / 7000);
+
+	//	algorithm_force_x =- ( Odx * 0.6f ) / 5;
+	//	algorithm_force_z =- ( Odz * 0.6f ) / 5 ;
+		
+
+	//	string Oos  = ConvertO(algorithm_force_x) + '\t' + ConvertO(algorithm_force_z) + '\n';
+	//	writeToFile("normal_force2.txt",Oos);
+
 
 
 		onurRUNS++;
 
-		//if(onurRUNS %100 == 0){
-		//cout << setw(10) << x) << z_diff  << setw(10) << algorithm_force_x << setw(10) << algorithm_force_z << "\n";
-		
-		//cout << setw(10) << bpX << setw(10) << bpZ << '\n';
-		
-		//}	
-			//cout << "ECGO_X is:" << ECGO_x <<"\t" << "ECGO_Z is:" << ECGO_z <<"\n";
-			//cout << "cpx is:" << cpX <<"\t" << "cpz is:" << cpZ <<"\n";
-			//cout << "algorithm_force_x:" << algorithm_force_x << "\t" << "algorithm_force_z:" << algorithm_force_z << "\n";
-		
-		//if(algorithm_force_x == 0 && algorithm_force_z == 0 && isWarning == false){
-			
-		//	cout << "Warning : Algorithm forces are zero \n";
-		//	isWarning = true;
-		//}
-
-
 	}
-
-
-
-	Point myP1, myP2;
-	hduVector3Dd pos;
-	//hduVector3Dd vel;
-	hdMakeCurrentDevice(effect->hHD1);
-	hdGetDoublev(HD_CURRENT_POSITION, pos);
-	// velocities are calculated, not read from devices
-	//hdGetDoublev(HD_CURRENT_VELOCITY, vel);
-
-	myP1.setValue((float)pos[0], (float)pos[1], (float)(pos[2])/**1.5f*/);
-
-	hpX = myP1[0];
-	hpY = myP1[1];
-	hpZ = myP1[2];
-
-
-
-
-	// velocities are calculated, not read from devices
-	//hipvX = vel[0];
-	//hipvY = vel[1];
-	//hipvZ = vel[2];
-
-	// AYSE SERVER CODE commented
-	//hdMakeCurrentDevice(effect->hHD2);
-	//hdGetDoublev(HD_CURRENT_POSITION, pos);
-	//hdGetDoublev(HD_CURRENT_VELOCITY, vel);
-	pos = server->positionData;
-	//vel = server->velocityData;
-
-	myP2.setValue((float)pos[0], (float)pos[1], (float)(pos[2])/**1.5f*/);
-	cpX = myP2[0];
-	cpY = myP2[1];
-	cpZ = myP2[2];
-
-	// velocities are calculated, not read from devices
-	//cipvX = vel[0];
-	//cipvY = vel[1];
-	//cipvZ = vel[2];
-
-	effect->PrintMotorTemp(aMotorTemp, gNumMotors);
-
-	//graphCtrller->hip.setVelocity( Point(hvX,hvY,hvZ));
-	//graphCtrller->cip.setVelocity( Point(cvX,cvY,cvZ));
-
-
 
 	// TODO: correct these
 	// define initial configurations 
 
 
-	if (dataRec->scenario == STRAIGHT)
+	if (dataRec->scenario == STRAIGHT) // How to code bad
 	{
 		dataRec->NUM_TRIALS_PER_COND = NUM_TRIALS_PER_COND_S;
 
 		if ((dataRec->perm == 0) || (dataRec->perm == 2) || (dataRec->perm == 3) || (dataRec->perm == 7))
 		{
+			
 			initialPosC[0] = -40 + SHIFT_X;
 			initialPosC[1] = -93;
 			initialPosC[2] = SHIFT_Z;
@@ -997,6 +1165,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		}
 		else
 		{
+			
 			initialPosC[0] = 64 + SHIFT_X;
 			initialPosC[1] = -93;
 			initialPosC[2] = SHIFT_Z;
@@ -1009,6 +1178,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	}
 	else if (dataRec->scenario == MIXED)
 	{
+	
 		dataRec->NUM_TRIALS_PER_COND = NUM_TRIALS_PER_COND_M;
 		initialPosC[0] = -61 + SHIFT_X;
 		initialPosC[1] = -93;
@@ -1068,8 +1238,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	if ((firstTime == true) && ((effect->keepHapticLoop) == true))
 	{
-
-		//fp.open("force_acc_vel.txt");
+		//onur
+//		fp.open("force_onur.txt");
 		firstTime = false;
 
 		//t = time(NULL);	elapsed = (long)t;
@@ -1190,6 +1360,10 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			graphCtrller->boardGr2->setInit(false);
 
 			gameStart = false;
+		
+			// if i comment this code, nothing changes... weird things happens
+			
+			
 			forceFB1 = initialC(1);
 			forceFB2 = initialC(2);
 
@@ -1326,8 +1500,10 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			//}
 
 		}//if( ( (runs > timeToGoInit+wait) && (trialNo==1) ) || (trialNo!=1) ) bunun biti�i
-		ballPosNext = calcBallPos();
-		//ballPosNext = calcBallPos(algorithm_force_x,algorithm_force_z);
+	//	ballPosNext = calcBallPos();
+	//	ballPosNext = calcBallPos(scaled_algorithm_force);
+	//	ballPosNext = calcBallPos(cip_forceFB2[0],cip_forceFB2[2]);
+		ballPosNext = calcBallPos(cipPos);
 		//CIGIL
 		// check the angle of the board 
 		angle_rot = graphCtrller->ballGr->getAngleBallGr();
@@ -2071,9 +2247,10 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	}//else if((effect->keepHapticLoop) == true)// Bunun biti�i buras� Her �ey bu if'in i�inde oluyor
 
 
+
 	hduVector3Dd position;
 	HDdouble kStiffness;
-
+	 
 
 	//Onur Burdan sonrasi feedback uyguluyor.
 
@@ -2083,8 +2260,14 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	hdGetDoublev(HD_CURRENT_POSITION, position);
 	hdGetDoublev(HD_NOMINAL_MAX_STIFFNESS, &kStiffness);
 
+	
+	if(abort_mission == true){
+		forceFB1 = hip_forceFB1;
+	}
 
-	float fMag = forceFB1.length();
+	
+
+	 float fMag = forceFB1.length();
 	if (fMag > FORCE_LIMIT)
 	{
 
@@ -2094,15 +2277,19 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 	/* AYSE: Render two simple horizontal planes to contstrain user movement to x-z plane. */
 	/* the planes are not stiff */
-	if (position[1] < HORIZONTAL_PLANE_L) // ground
-	{
-		forceFB1[1] = kStiffness * (HORIZONTAL_PLANE_L - position[1]);
-	}
-	else if (position[1] > HORIZONTAL_PLANE_U) // ceiling
-	{
-		forceFB1[1] = kStiffness * (HORIZONTAL_PLANE_U - position[1]);
-	}
 
+	if(abort_mission == false ){
+
+		if (position[1] < HORIZONTAL_PLANE_L) // ground
+		{
+			forceFB1[1] = kStiffness * (HORIZONTAL_PLANE_L - position[1]);
+		}
+		else if (position[1] > HORIZONTAL_PLANE_U) // ceiling
+		{
+			forceFB1[1] = kStiffness * (HORIZONTAL_PLANE_U - position[1]);
+		}
+
+	}
 	fOnHip_scaled = forceFB1;
 	// send all forces to device
 	//Onur comment feedback for Haptic 1
@@ -2124,62 +2311,58 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//hdGetDoublev(HD_NOMINAL_MAX_STIFFNESS, &kStiffness);
 	
 	//onur change values
-	//forceFB2[0] = algorithm_force_x;
-	//forceFB2[2] = algorithm_force_z;
-	/*
-	if(onurRUNS %4000 == 0 ){
-			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-			//cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n";
-	}
-	*/
+
+	//minus left haptic force
+//	algorithm_force_x -= forceFB1[0];
+//	algorithm_force_z -= forceFB1[2];
+	
+	
+	
+	//	forceFB2[0] = algorithm_force_x;
+	//	forceFB2[2] = algorithm_force_z;
+
+
+
+	
+	
+	
 	fMag = forceFB2.length();
 	if (fMag > FORCE_LIMIT)
 	{	
-		//cout << "Get Scaled" << onurRUNS << "\n";
+	
 		forceFB2 = (forceFB2 / fMag) * FORCE_LIMIT;
 	}
 	forceFB2 = F_SCALE_FACTOR * forceFB2;
 
-
-	/*
-	//Onur 
-	if(forceFB2.length() > FORCE_LIMIT){
-
-		forceFB2[0] = 0 ;
-		forceFB2[1] = 0; 
-		forceFB2[2] = 0;
-	}
-	*/
-	/*
-	if(onurRUNS %4000 == 0 ){
-			//cout << "bpX is:" << bpX << "\t" << "bpZ is: " << bpZ << "\n";
-			//cout << "forceFB2:" << forceFB2[0] <<"\t" << forceFB2[2]  <<"\n\n";
-	}*/
-
-
 	position = server->positionData;
-
-	if (position[1] < HORIZONTAL_PLANE_L) // ground
-	{
-		forceFB2[1] = kStiffness * (HORIZONTAL_PLANE_L - position[1]);
-	}
-	else if (position[1] > HORIZONTAL_PLANE_U) // ceiling
-	{
-		forceFB2[1] = kStiffness * (HORIZONTAL_PLANE_U - position[1]);
-	}
+	
 
 
+		if (position[1] < HORIZONTAL_PLANE_L) // ground
+		{
+			forceFB2[1] = kStiffness * (HORIZONTAL_PLANE_L - position[1]);
+		}
+		else if (position[1] > HORIZONTAL_PLANE_U) // ceiling
+			{
+					forceFB2[1] = kStiffness * (HORIZONTAL_PLANE_U - position[1]);
+		}
+	
 
 	fOnCip_scaled = forceFB2;
 
 	time_t currentTime;
 	currentTime = time(NULL);
-	//print forces
+	//onur
 	//if( ( (runs>timeToGoInit+wait)&&(trialNo==1) ) || (trialNo!=1))
 	//{
 	//fp << currentTime << " " << forceFB2[0]   <<" " << forceFB2[1]  <<" "<<forceFB2[2]<<endl;
 	//}
 	// send all forces to device
+
+
+
+
+
 	HDdouble fToD2[3] = { forceFB2[0], forceFB2[1], forceFB2[2] };
 
 	// send forces to the client
@@ -2187,13 +2370,13 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 
 	//Onur comment feedback for Right Haptic hhd2
-	server->forceData = hduVector3Dd(forceFB2[0], forceFB2[1], forceFB2[2]);
+	//server->forceData = hduVector3Dd(forceFB2[0], forceFB2[1], forceFB2[2]);
 
-	//server->forceData = hduVector3Dd(0, 0, 0);
+	server->forceData = hduVector3Dd(0, 0, 0);
 	server->update();
 
 
-
+	
 
 	//	effect->PreventWarmMotors( hduVector3Dd(fToD2[0], fToD2[1], fToD2[2]) );  
 	//	hdSetDoublev(HD_CURRENT_FORCE, fToD2);
@@ -2282,7 +2465,7 @@ void HapticCallBack::stopHaptics()
 		callbackHandlers.pop_back();
 	}
 	hdDisableDevice(effect->hHD1/*hdGetCurrentDevice()*/);
-	//fp.close();
+//	fp.close();
 
 	//dataRec->writeMeToFile();
 }
@@ -2869,10 +3052,10 @@ Vector collX(Vector ball)
 
 
 
-
+/*Original Function
 Vector calcBallPos()
 {
-	
+	cout << "Inside\n";
 	// IP positions	
 	float cpX = 0, cpY = 0, cpZ = 0 , hpX = 0 , hpY = 0 , hpZ = 0 ;
 	// IP positions
@@ -3024,7 +3207,7 @@ Vector calcBallPos()
 	bvZ = 0;
 	}*/
 //ONUR
-
+/*
 	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
 	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
 
@@ -3047,7 +3230,378 @@ Vector calcBallPos()
 
 	return Point(bpX, bpY, bpZ);
 }
+*/
 
+Vector calcBallPos(vector<float> cip_pos)
+{
+
+	// IP positions	
+	float cpX = 0, cpY = 0, cpZ = 0 , hpX = 0 , hpY = 0 , hpZ = 0 ;
+	// IP positions
+	float cvX = 0, cvY = 0, cvZ = 0, hvX = 0, hvY = 0, hvZ = 0;
+
+	// handle positions
+	float hcpX = 0, hcpY = 0, hcpZ = 0, hhpX = 0, hhpY = 0, hhpZ = 0;
+	// handle velocities
+	float hcvX = 0, hcvY = 0, hcvZ = 0, hhvX = 0, hhvY = 0, hhvZ = 0;
+
+	// ball position and velocity
+	float bpX, bpY, bpZ, bvX = 0, bvY = 0, bvZ = 0;
+
+
+
+
+
+	float ballMass;
+	float static_friction_magnitude, kinetic_friction_magnitude;
+
+	float accX = 0, accY = 0, accZ = 0;
+
+	Vector forceBall;
+	forceBall[0] = 0.0f;
+	forceBall[1] = 0.0f;
+	forceBall[2] = 0.0f;
+
+
+	float angle_rot = graphCtrller->ballGr->getAngleBallGr();
+
+	graphCtrller->cip.getPosition().getValue(cpX, cpY, cpZ);
+	graphCtrller->hip.getPosition().getValue(hpX, hpY, hpZ);
+
+	graphCtrller->cip.getVelocity().getValue(cvX, cvY, cvZ);
+	graphCtrller->hip.getVelocity().getValue(hvX, hvY, hvZ);
+
+	graphCtrller->ballGr->getPosition().getValue(bpX, bpY, bpZ);
+	graphCtrller->ballGr->getVelocity().getValue(bvX, bvY, bvZ);
+
+
+	if(cip_pos.size() > 0 ) {
+
+			
+		cpX = cip_pos[0];
+		cpZ = cip_pos[1];
+
+	}
+
+	ballMass = graphCtrller->ballGr->getMass();
+
+
+	// calculate handle positions 
+	hhpX = bpX - (BALL_WIDTH)*0.5*cos(angle_rot);
+	hhpZ = bpZ + (BALL_WIDTH)*0.5*sin(angle_rot);
+
+	hcpX = bpX + (BALL_WIDTH)*0.5*cos(angle_rot);
+	hcpZ = bpZ - (BALL_WIDTH)*0.5*sin(angle_rot);
+
+
+	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
+
+
+
+	
+
+
+	forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
+	+ kpHN*(cpX-hcpX) + kdN*(cvX-hcvX)+fcw[0] + boundaryforceCX;
+
+	forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
+	+kpHN*(cpZ-hcpZ) + kdN*(cvZ-hcvZ)+fcw[2] + boundaryforceCZ; 
+
+	//Onur
+	
+
+	fResistance[0] = fcw[0] + boundaryforceCX;
+	fResistance[2] = fcw[2] + boundaryforceCZ;
+
+	//graphCtrller->cip.setPosition(Point(cpX, cpY, cpZ), runs);
+
+	graphCtrller->handleH.setPosition(Point(hhpX, hhpY, hhpZ), runs);
+	graphCtrller->handleC.setPosition(Point(hcpX, hcpY, hcpZ), runs);
+
+	graphCtrller->handleH.getVelocity().getValue(hvX, hvY, hvZ);
+	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
+
+	//fp	<< forceBall[0] << ", " << forceBall[2] << ", ";
+
+	static_friction_magnitude = ballMass * G * COEFFICIENT_FRICTION_STATIC;
+	kinetic_friction_magnitude = ballMass * G * COEFFICIENT_FRICTION_STATIC;
+
+	if (abs(bvX) == 0)
+	{
+		if (abs(forceBall[0]) >= abs(static_friction_magnitude * cos(angle_rot)))
+		{
+			fFriction[0] = -(abs(static_friction_magnitude * cos(angle_rot)) * SSIGN(bvX));
+			forceBall[0] += -(abs(static_friction_magnitude * cos(angle_rot)) * SSIGN(bvX)); // static friction, when velocity is zero 
+		}
+		else
+		{
+			fFriction[0] = -forceBall[0];
+			forceBall[0] = 0.0f;
+		}
+
+	}
+	else
+	{
+		fFriction[0] = -(abs(kinetic_friction_magnitude *cos(angle_rot)) * SSIGN(bvX));
+		forceBall[0] += -(abs(kinetic_friction_magnitude *cos(angle_rot)) * SSIGN(bvX));// kinetic friction, when there is a translation and velocity is nonzero					 			   
+	}
+
+	if (abs(bvZ) == 0)
+	{
+		if (abs(forceBall[2]) >= abs(static_friction_magnitude * sin(angle_rot)))
+		{
+			fFriction[2] = -(abs(static_friction_magnitude *sin(angle_rot)) * SSIGN(bvZ));
+			forceBall[2] += -(abs(static_friction_magnitude *sin(angle_rot)) * SSIGN(bvZ)); // static friction
+		}
+		else
+		{
+			fFriction[2] = -forceBall[2];
+			forceBall[2] = 0.0f;
+		}
+	}
+	else
+	{
+		fFriction[2] = -(abs(kinetic_friction_magnitude *sin(angle_rot))* SSIGN(bvZ));
+		forceBall[2] += -(abs(kinetic_friction_magnitude *sin(angle_rot))* SSIGN(bvZ));	// static friction
+	}
+
+
+
+
+
+
+
+
+	accX = forceBall[0] / ballMass;//* .0010;
+	accZ = forceBall[2] / ballMass;//* .0010;
+
+	bvX += accX * DELTA_T;
+	bvZ += accZ * DELTA_T;
+
+	graphCtrller->ballGr->setVelocity(Vector(bvX, bvY, bvZ));
+	graphCtrller->ballGr->setAcceleration(Vector(accX, accY, accZ));
+
+	float fnet = sqrt(forceBall[0] * forceBall[0] + forceBall[2] * forceBall[2]);
+	float vnet = sqrt(bvX*bvX + bvZ*bvZ);
+	float anet = sqrt(accX*accX + accZ*accZ);
+
+	// don't translate in rotational scenario CIGIL
+	/*if (dataRec->scenario == ROTATIONAL)
+	{
+	bvX = 0;
+	bvZ = 0;
+	}*/
+//ONUR
+
+	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
+	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
+
+
+	//if (runs % 1000 == 0)
+	//{		
+	//	cout << "X - F_after = " << forceBall[0] << " a = " << accX << " v = " << bvX << endl;
+	//	cout << "Z - F_after = " << forceBall[2] << " a = " << accZ << " v = " << bvZ << endl << endl;
+	//}
+
+	//fp	<< forceBall[0] << ", " << forceBall[2] << ", "
+	//	<< accX << ", "  << accZ << ", "
+	//	<< bvX << ", "   << bvZ << ", "
+	//	<< hvX << ", "   << hvZ << ", "
+	//	<< cvX << ", "   << cvZ << ", "
+	//	<< hhvX << ", "  << hhvZ << ", "
+	//	<< hcvX << ", "  << hcvZ << ", "
+	//	<< kdN*(hvX-hhvX) << ", "   <<kdN*(hvZ-hhvZ) << ", "<<endl;
+
+	//cout << setw(10) << bpX << setw(10) << bpY << setw(10) << bpZ << '\n';
+	return Point(bpX, bpY, bpZ);
+}
+
+
+
+
+
+
+
+
+/*
+Vector calcBallPos(Vector scaled_algorithm_force)
+{
+	
+	// IP positions	
+	float cpX = 0, cpY = 0, cpZ = 0 , hpX = 0 , hpY = 0 , hpZ = 0 ;
+	// IP positions
+	float cvX = 0, cvY = 0, cvZ = 0, hvX = 0, hvY = 0, hvZ = 0;
+
+	// handle positions
+	float hcpX = 0, hcpY = 0, hcpZ = 0, hhpX = 0, hhpY = 0, hhpZ = 0;
+	// handle velocities
+	float hcvX = 0, hcvY = 0, hcvZ = 0, hhvX = 0, hhvY = 0, hhvZ = 0;
+
+	// ball position and velocity
+	float bpX, bpY, bpZ, bvX = 0, bvY = 0, bvZ = 0;
+
+
+
+
+
+	float ballMass;
+	float static_friction_magnitude, kinetic_friction_magnitude;
+
+	float accX = 0, accY = 0, accZ = 0;
+
+	Vector forceBall;
+	forceBall[0] = 0.0f;
+	forceBall[1] = 0.0f;
+	forceBall[2] = 0.0f;
+
+
+	float angle_rot = graphCtrller->ballGr->getAngleBallGr();
+
+	graphCtrller->cip.getPosition().getValue(cpX, cpY, cpZ);
+	graphCtrller->hip.getPosition().getValue(hpX, hpY, hpZ);
+
+	graphCtrller->cip.getVelocity().getValue(cvX, cvY, cvZ);
+	graphCtrller->hip.getVelocity().getValue(hvX, hvY, hvZ);
+
+	graphCtrller->ballGr->getPosition().getValue(bpX, bpY, bpZ);
+	graphCtrller->ballGr->getVelocity().getValue(bvX, bvY, bvZ);
+
+
+
+
+	ballMass = graphCtrller->ballGr->getMass();
+
+
+	// calculate handle positions 
+	hhpX = bpX - (BALL_WIDTH)*0.5*cos(angle_rot);
+	hhpZ = bpZ + (BALL_WIDTH)*0.5*sin(angle_rot);
+
+	hcpX = bpX + (BALL_WIDTH)*0.5*cos(angle_rot);
+	hcpZ = bpZ - (BALL_WIDTH)*0.5*sin(angle_rot);
+
+
+	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
+
+
+
+	
+
+
+	forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
+	+ scaled_algorithm_force[0]+fcw[0] + boundaryforceCX;
+
+	forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
+	+scaled_algorithm_force[2] +fcw[2] + boundaryforceCZ; 
+
+	//Onur
+	
+
+	fResistance[0] = fcw[0] + boundaryforceCX;
+	fResistance[2] = fcw[2] + boundaryforceCZ;
+
+	//graphCtrller->cip.setPosition(Point(cpX, cpY, cpZ), runs);
+
+	graphCtrller->handleH.setPosition(Point(hhpX, hhpY, hhpZ), runs);
+	graphCtrller->handleC.setPosition(Point(hcpX, hcpY, hcpZ), runs);
+
+	graphCtrller->handleH.getVelocity().getValue(hvX, hvY, hvZ);
+	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
+
+	//fp	<< forceBall[0] << ", " << forceBall[2] << ", ";
+
+	static_friction_magnitude = ballMass * G * COEFFICIENT_FRICTION_STATIC;
+	kinetic_friction_magnitude = ballMass * G * COEFFICIENT_FRICTION_STATIC;
+
+	if (abs(bvX) == 0)
+	{
+		if (abs(forceBall[0]) >= abs(static_friction_magnitude * cos(angle_rot)))
+		{
+			fFriction[0] = -(abs(static_friction_magnitude * cos(angle_rot)) * SSIGN(bvX));
+			forceBall[0] += -(abs(static_friction_magnitude * cos(angle_rot)) * SSIGN(bvX)); // static friction, when velocity is zero 
+		}
+		else
+		{
+			fFriction[0] = -forceBall[0];
+			forceBall[0] = 0.0f;
+		}
+
+	}
+	else
+	{
+		fFriction[0] = -(abs(kinetic_friction_magnitude *cos(angle_rot)) * SSIGN(bvX));
+		forceBall[0] += -(abs(kinetic_friction_magnitude *cos(angle_rot)) * SSIGN(bvX));// kinetic friction, when there is a translation and velocity is nonzero					 			   
+	}
+
+	if (abs(bvZ) == 0)
+	{
+		if (abs(forceBall[2]) >= abs(static_friction_magnitude * sin(angle_rot)))
+		{
+			fFriction[2] = -(abs(static_friction_magnitude *sin(angle_rot)) * SSIGN(bvZ));
+			forceBall[2] += -(abs(static_friction_magnitude *sin(angle_rot)) * SSIGN(bvZ)); // static friction
+		}
+		else
+		{
+			fFriction[2] = -forceBall[2];
+			forceBall[2] = 0.0f;
+		}
+	}
+	else
+	{
+		fFriction[2] = -(abs(kinetic_friction_magnitude *sin(angle_rot))* SSIGN(bvZ));
+		forceBall[2] += -(abs(kinetic_friction_magnitude *sin(angle_rot))* SSIGN(bvZ));	// static friction
+	}
+
+
+
+
+
+
+
+
+	accX = forceBall[0] / ballMass;//* .0010;
+	accZ = forceBall[2] / ballMass;//* .0010;
+
+	bvX += accX * DELTA_T;
+	bvZ += accZ * DELTA_T;
+
+	graphCtrller->ballGr->setVelocity(Vector(bvX, bvY, bvZ));
+	graphCtrller->ballGr->setAcceleration(Vector(accX, accY, accZ));
+
+	float fnet = sqrt(forceBall[0] * forceBall[0] + forceBall[2] * forceBall[2]);
+	float vnet = sqrt(bvX*bvX + bvZ*bvZ);
+	float anet = sqrt(accX*accX + accZ*accZ);
+
+	// don't translate in rotational scenario CIGIL
+	/*if (dataRec->scenario == ROTATIONAL)
+	{
+	bvX = 0;
+	bvZ = 0;
+	}*/
+//ONUR
+/*
+	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
+	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
+
+
+	//if (runs % 1000 == 0)
+	//{		
+	//	cout << "X - F_after = " << forceBall[0] << " a = " << accX << " v = " << bvX << endl;
+	//	cout << "Z - F_after = " << forceBall[2] << " a = " << accZ << " v = " << bvZ << endl << endl;
+	//}
+
+	//fp	<< forceBall[0] << ", " << forceBall[2] << ", "
+	//	<< accX << ", "  << accZ << ", "
+	//	<< bvX << ", "   << bvZ << ", "
+	//	<< hvX << ", "   << hvZ << ", "
+	//	<< cvX << ", "   << cvZ << ", "
+	//	<< hhvX << ", "  << hhvZ << ", "
+	//	<< hcvX << ", "  << hcvZ << ", "
+	//	<< kdN*(hvX-hhvX) << ", "   <<kdN*(hvZ-hhvZ) << ", "<<endl;
+
+
+	return Point(bpX, bpY, bpZ);
+}
+*/
 
 /*
 Vector calcBallPos(float x, float z)
@@ -3099,7 +3653,7 @@ Vector calcBallPos(float x, float z)
 //	cout << "time is " << '\t' << time << "\n";
 
 
-	if(time < 7000 ){
+	if(time < 1000 ){
 
 		return Point(bpX, bpY, bpZ);
 	}
@@ -3234,9 +3788,9 @@ Vector calcBallPos(float x, float z)
 
 	return Point(bpX, bpY, bpZ);
 }
-
-
 */
+
+
 void setforces(int r11, int r22, int r33, int r44, int forcetypes)
 {
 	//CIGIL: increase magnitude of constant force
@@ -3813,14 +4367,30 @@ void createLen(float lenArray[48][3])
 }
 Vector initialC(int type)
 {
+	
 	Vector firstPos, position;
 	Vector cur_pos, inc;
 
 	if (type == 1)
 	{
+
+
 		graphCtrller->hip.getPosition().getValue(position[0], position[1], position[2]);
+		
 		firstPos = firstPosHip;
-		totErrC = totErrorHip;
+
+		//cout << "totErrorHip is : " << totErrorHip[0] <<  totErrorHip[1]  << totErrorHip[2] <<"\n";
+		totErrC = totErrorHip; //totErrorHip is zero
+		/*
+			probably custom class variable which initialized to zero, which is not good
+
+			because :
+			1)anybody who doesnt know the class, couldnt know initial value of this class
+
+			2) Custom class name is Vector, which is very close vector class, which is confusing
+
+
+		*/ 
 		initialPos[0] = initialPosH[0];
 		initialPos[1] = initialPosH[1];
 		initialPos[2] = initialPosH[2];
@@ -3846,6 +4416,10 @@ Vector initialC(int type)
 	else if (runs < timeToGoInit + 1)
 	{
 		for (int i = 0; i < 3; i++) {
+			if(type == 2)
+		//	cout <<  initialPos[0] << '\t' << initialPos[1] << '\t' << initialPos[2] << '\n';
+		//	cout << position[0] << '\t' << position[1] << '\t' << position[2] << '\n' ;
+		
 			inc[i] = (initialPos[i] - firstPos[i]) / (timeToGoInit);
 			cur_pos[i] = firstPos[i] + inc[i] * (runs - 2);
 			errorC[i] = cur_pos[i] - position[i];
@@ -3857,6 +4431,7 @@ Vector initialC(int type)
 	{
 
 		for (int i = 0; i < 3; i++) {
+		
 			cur_pos[i] = initialPos[i];
 			errorC[i] = cur_pos[i] - position[i];
 			totErrC[i] = totErrC[i] + errorC[i];

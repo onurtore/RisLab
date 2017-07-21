@@ -8,7 +8,8 @@ ServerApp::ServerApp()
 {
     // id's to assign clients for our table
     client_id = 0;
-
+	
+	
     // set up the server network to listen 
     network = new ServerNetwork(); 
 

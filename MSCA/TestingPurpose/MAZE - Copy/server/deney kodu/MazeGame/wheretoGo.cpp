@@ -528,7 +528,7 @@ vector<double> wheretoGo::findMinPath(int x, int y) {
 	return newxy;
 }
 
-
+/*
 vector<double> wheretoGo::calculateForce(double res_x, double res_y, double res_x_vel, double res_y_vel){
 	
 	double ksc;
@@ -564,7 +564,7 @@ vector<double> wheretoGo::calculateForce(double res_x, double res_y, double res_
 
 }
 
-
+*/
 
 void wheretoGo::pathImprove() {
 
