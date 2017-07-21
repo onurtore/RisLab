@@ -106,7 +106,9 @@ int main(int argc, char* argv[])
 
 
 	// initialize the client 
-    client = new ClientApp();
+  
+	//Dada
+	client = new ClientApp();
 	//_beginthread(clientLoop,0,0);
 
     /* Wait until the user presses a key. Meanwhile, the scheduler is
