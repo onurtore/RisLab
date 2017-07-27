@@ -658,26 +658,32 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 {
 	float rotationCubeAngle = graphCtrller->myRotationCube->getAngleBallGr();
 	float cubeAngle = graphCtrller->ballGr->getAngleBallGr();
-	float new_angle = 0;
 	static Vector RotonurForce;
-	if(abs(cubeAngle - new_angle) < 0.20/*Threshold value*/  && (onurRUNS % 10000 == 0)) {
+	static bool getInto = false;
+	if(cubeAngle == rotationCubeAngle ) {
 		RotonurForce[0] = 0;
 		RotonurForce[2] = 0;
 		cout << "Enter a new value for rotation of rotationCube(between 0-6.30 civari)\n";
-		cin >> new_angle;
-		graphCtrller->myRotationCube->setAngleBallGr(new_angle);
-
+		cin >> rotationCubeAngle;
+		graphCtrller->myRotationCube->setAngleBallGr(rotationCubeAngle);
+		
 	}
 
-	if(abs(cubeAngle - new_angle) > 0.20/*Threshold value*/ ) {
+	if( cubeAngle != rotationCubeAngle) {
 
-		float angle_vel =  ( cubeAngle - new_angle )  / 0.001;
-		float angle_acc =  ( angle_vel) / 0.001;
+		getInto = false;
+
+		float angle_vel =  ( rotationCubeAngle - cubeAngle )  / 1000;
+		float angle_acc =  ( angle_vel);
+
 		float inertia = graphCtrller->ballGr->ball->calculateInertia();
 		float onur_moment = inertia * angle_acc;
-		RotonurForce[0] =  (onur_moment) / (sin(cubeAngle) * BALL_WIDTH * 0.5 );
-		RotonurForce[2] =  (onur_moment) / (cos(cubeAngle) * BALL_WIDTH * 0.5);
-		cout << RotonurForce[0] << '\t' << RotonurForce[2] << '\n';
+
+		if(cubeAngle == 0){
+			cubeAngle = 0.001;
+		}
+		RotonurForce[0] =  (onur_moment) / (sin(cubeAngle) * BALL_WIDTH * 0.5 ) * 100 ;
+		RotonurForce[2] =  (onur_moment) / (cos(cubeAngle) * BALL_WIDTH * 0.5) * 100;
 		
 	}
 
