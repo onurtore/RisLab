@@ -189,6 +189,8 @@ float Ball::calculateInertia()
 
 float Ball::calculateMoment(Vector f1,Vector f2)
 {   
+
+	//or tork // whatever
 	float Mom;
 	Mom=0.0f;
 	

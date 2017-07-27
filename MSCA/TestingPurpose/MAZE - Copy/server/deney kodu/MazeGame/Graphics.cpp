@@ -1151,8 +1151,12 @@ void graphicsTimerCallback(void *data, SoSensor *)
 
 		graphCtrller->mypathCube->transfMat->translation.setValue(pathCube_x,0.8f,pathCube_z);
 		graphCtrller->mypathCube2->transfMat->translation.setValue(pathCube_x,0.8f,pathCube_z);
+		
+		
+		float rotate_angle = graphCtrller->myRotationCube->getAngleBallGr();
 
-
+		graphCtrller->myRotationCube->transfMat->rotation.setValue(Vector(0,1,0),rotate_angle);
+		graphCtrller->myRotationCube2->transfMat->rotation.setValue(Vector(0,1,0),rotate_angle);
 
 
 		float bpX, bpY, bpZ, cpX, cpY, cpZ, npX, npY, npZ, hpX, hpY, hpZ,alpha;

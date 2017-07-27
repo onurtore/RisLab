@@ -260,7 +260,8 @@ Vector calculateFriction();
 
 //Onur Bu fonksiyonun i�eri�ini de�i�tirdim
 //Vector calcBallPos();
-Vector calcBallPos(vector<float> cip_pos);
+//Vector calcBallPos(vector<float> cip_pos);
+Vector calcBallPos(); // Cismi hareket ettirmemesi için tasarlandi.//OnurMoment
 // find the closest wall
 Vector collX(Vector ball);
 
@@ -655,6 +656,34 @@ Callback for haptic loop.
 *******************************************************************************/
 HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 {
+	float rotationCubeAngle = graphCtrller->myRotationCube->getAngleBallGr();
+	float cubeAngle = graphCtrller->ballGr->getAngleBallGr();
+	float new_angle = 0;
+	static Vector RotonurForce;
+	if(abs(cubeAngle - new_angle) < 0.20/*Threshold value*/  && (onurRUNS % 10000 == 0)) {
+		RotonurForce[0] = 0;
+		RotonurForce[2] = 0;
+		cout << "Enter a new value for rotation of rotationCube(between 0-6.30 civari)\n";
+		cin >> new_angle;
+		graphCtrller->myRotationCube->setAngleBallGr(new_angle);
+
+	}
+
+	if(abs(cubeAngle - new_angle) > 0.20/*Threshold value*/ ) {
+
+		float angle_vel =  ( cubeAngle - new_angle )  / 0.001;
+		float angle_acc =  ( angle_vel) / 0.001;
+		float inertia = graphCtrller->ballGr->ball->calculateInertia();
+		float onur_moment = inertia * angle_acc;
+		RotonurForce[0] =  (onur_moment) / (sin(cubeAngle) * BALL_WIDTH * 0.5 );
+		RotonurForce[2] =  (onur_moment) / (cos(cubeAngle) * BALL_WIDTH * 0.5);
+		cout << RotonurForce[0] << '\t' << RotonurForce[2] << '\n';
+		
+	}
+
+
+	
+
 vector<float> cipPos;
 	//onur
 	static bool enter =  false;
@@ -1447,7 +1476,9 @@ vector<float> cipPos;
 
 			// AYSE: deleting
 			//angle_rot = 
-			graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
+			//Onur Moment 
+			//Make rotation zero
+			//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
 
 
 			////CIGIL: check if there is an angular collision
@@ -1459,8 +1490,8 @@ vector<float> cipPos;
 			//}
 
 		}//if( ( (runs > timeToGoInit+wait) && (trialNo==1) ) || (trialNo!=1) ) bunun biti�i
-		//ballPosNext = calcBallPos();
-		ballPosNext = calcBallPos(cipPos);
+		ballPosNext = calcBallPos();
+		//ballPosNext = calcBallPos(cipPos);
 		//CIGIL
 		// check the angle of the board 
 		angle_rot = graphCtrller->ballGr->getAngleBallGr();
@@ -2185,9 +2216,12 @@ vector<float> cipPos;
 
 			
 				//Onur
-				graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
-				graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
-
+				//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);//OnurMoment block angular movement 
+				//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);//OnurMoment block angular movement
+				force1[0] = 0;
+				force1[2] = 0;
+				force1[1] = 0;
+				graphCtrller->ballGr->calculateAngleBallGr(RotonurForce,force1);//OnurMoment block angular movement 
 			}
 			//else
 			//{
@@ -2245,8 +2279,8 @@ vector<float> cipPos;
 	fOnHip_scaled = forceFB1;
 	// send all forces to device
 	//Onur comment feedback for Haptic 1
-	HDdouble fToD1[3] = { forceFB1[0], forceFB1[1], forceFB1[2] };
-	//HDdouble fToD1[3] = { 0, 0, 0 };
+	//HDdouble fToD1[3] = { forceFB1[0], forceFB1[1], forceFB1[2] };  //Onur Moment : Make Feedback zero,free haptic
+	HDdouble fToD1[3] = { 0, 0, 0 };
 
 
 	effect->PreventWarmMotors(hduVector3Dd(fToD1[0], fToD1[1], fToD1[2]));
@@ -3008,6 +3042,7 @@ Vector collX(Vector ball)
 
 
 /*
+//OnurMoment
 Vector calcBallPos()
 {
 	
@@ -3187,7 +3222,187 @@ Vector calcBallPos()
 
 */
 
+//OnurMoment
+Vector calcBallPos()
+{
+	
+	// IP positions	
+	float cpX = 0, cpY = 0, cpZ = 0 , hpX = 0 , hpY = 0 , hpZ = 0 ;
+	// IP positions
+	float cvX = 0, cvY = 0, cvZ = 0, hvX = 0, hvY = 0, hvZ = 0;
 
+	// handle positions
+	float hcpX = 0, hcpY = 0, hcpZ = 0, hhpX = 0, hhpY = 0, hhpZ = 0;
+	// handle velocities
+	float hcvX = 0, hcvY = 0, hcvZ = 0, hhvX = 0, hhvY = 0, hhvZ = 0;
+
+	// ball position and velocity
+	float bpX, bpY, bpZ, bvX = 0, bvY = 0, bvZ = 0;
+
+
+
+
+
+	float ballMass;
+	float static_friction_magnitude, kinetic_friction_magnitude;
+
+	float accX = 0, accY = 0, accZ = 0;
+
+	Vector forceBall;
+	forceBall[0] = 0.0f;
+	forceBall[1] = 0.0f;
+	forceBall[2] = 0.0f;
+
+
+	float angle_rot = graphCtrller->ballGr->getAngleBallGr();
+
+	graphCtrller->cip.getPosition().getValue(cpX, cpY, cpZ);
+	graphCtrller->hip.getPosition().getValue(hpX, hpY, hpZ);
+
+	graphCtrller->cip.getVelocity().getValue(cvX, cvY, cvZ);
+	graphCtrller->hip.getVelocity().getValue(hvX, hvY, hvZ);
+
+	graphCtrller->ballGr->getPosition().getValue(bpX, bpY, bpZ);
+	graphCtrller->ballGr->getVelocity().getValue(bvX, bvY, bvZ);
+
+
+
+
+	ballMass = graphCtrller->ballGr->getMass();
+
+
+	// calculate handle positions 
+	hhpX = bpX - (BALL_WIDTH)*0.5*cos(angle_rot);
+	hhpZ = bpZ + (BALL_WIDTH)*0.5*sin(angle_rot);
+
+	hcpX = bpX + (BALL_WIDTH)*0.5*cos(angle_rot);
+	hcpZ = bpZ - (BALL_WIDTH)*0.5*sin(angle_rot);
+
+
+	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
+
+
+
+	
+
+
+	forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
+	+ kpHN*(cpX-hcpX) + kdN*(cvX-hcvX)+fcw[0] + boundaryforceCX;
+
+	forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
+	+kpHN*(cpZ-hcpZ) + kdN*(cvZ-hcvZ)+fcw[2] + boundaryforceCZ; 
+
+	//Onur
+	
+
+	fResistance[0] = fcw[0] + boundaryforceCX;
+	fResistance[2] = fcw[2] + boundaryforceCZ;
+
+	//graphCtrller->cip.setPosition(Point(cpX, cpY, cpZ), runs);
+
+	graphCtrller->handleH.setPosition(Point(hhpX, hhpY, hhpZ), runs);
+	graphCtrller->handleC.setPosition(Point(hcpX, hcpY, hcpZ), runs);
+
+	graphCtrller->handleH.getVelocity().getValue(hvX, hvY, hvZ);
+	graphCtrller->handleC.getVelocity().getValue(hcvX, hcvY, hcvZ);
+
+	//fp	<< forceBall[0] << ", " << forceBall[2] << ", ";
+
+	static_friction_magnitude = ballMass * G * COEFFICIENT_FRICTION_STATIC;
+	kinetic_friction_magnitude = ballMass * G * COEFFICIENT_FRICTION_STATIC;
+
+	if (abs(bvX) == 0)
+	{
+		if (abs(forceBall[0]) >= abs(static_friction_magnitude * cos(angle_rot)))
+		{
+			fFriction[0] = -(abs(static_friction_magnitude * cos(angle_rot)) * SSIGN(bvX));
+			forceBall[0] += -(abs(static_friction_magnitude * cos(angle_rot)) * SSIGN(bvX)); // static friction, when velocity is zero 
+		}
+		else
+		{
+			fFriction[0] = -forceBall[0];
+			forceBall[0] = 0.0f;
+		}
+
+	}
+	else
+	{
+		fFriction[0] = -(abs(kinetic_friction_magnitude *cos(angle_rot)) * SSIGN(bvX));
+		forceBall[0] += -(abs(kinetic_friction_magnitude *cos(angle_rot)) * SSIGN(bvX));// kinetic friction, when there is a translation and velocity is nonzero					 			   
+	}
+
+	if (abs(bvZ) == 0)
+	{
+		if (abs(forceBall[2]) >= abs(static_friction_magnitude * sin(angle_rot)))
+		{
+			fFriction[2] = -(abs(static_friction_magnitude *sin(angle_rot)) * SSIGN(bvZ));
+			forceBall[2] += -(abs(static_friction_magnitude *sin(angle_rot)) * SSIGN(bvZ)); // static friction
+		}
+		else
+		{
+			fFriction[2] = -forceBall[2];
+			forceBall[2] = 0.0f;
+		}
+	}
+	else
+	{
+		fFriction[2] = -(abs(kinetic_friction_magnitude *sin(angle_rot))* SSIGN(bvZ));
+		forceBall[2] += -(abs(kinetic_friction_magnitude *sin(angle_rot))* SSIGN(bvZ));	// static friction
+	}
+
+
+
+
+
+	
+	forceBall[0] = 0;//Make force 0 so that cube cant move -> still angular movement
+	forceBall[2] = 0;
+
+	accX = forceBall[0] / ballMass;//* .0010;
+	accZ = forceBall[2] / ballMass;//* .0010;
+
+	bvX += accX * DELTA_T;
+	bvZ += accZ * DELTA_T;
+
+	graphCtrller->ballGr->setVelocity(Vector(bvX, bvY, bvZ));
+	graphCtrller->ballGr->setAcceleration(Vector(accX, accY, accZ));
+
+	float fnet = sqrt(forceBall[0] * forceBall[0] + forceBall[2] * forceBall[2]);
+	float vnet = sqrt(bvX*bvX + bvZ*bvZ);
+	float anet = sqrt(accX*accX + accZ*accZ);
+
+	// don't translate in rotational scenario CIGIL
+	/*if (dataRec->scenario == ROTATIONAL)
+	{
+	bvX = 0;
+	bvZ = 0;
+	}*/
+
+	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
+	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
+
+
+	//if (runs % 1000 == 0)
+	//{		
+	//	cout << "X - F_after = " << forceBall[0] << " a = " << accX << " v = " << bvX << endl;
+	//	cout << "Z - F_after = " << forceBall[2] << " a = " << accZ << " v = " << bvZ << endl << endl;
+	//}
+
+	//fp	<< forceBall[0] << ", " << forceBall[2] << ", "
+	//	<< accX << ", "  << accZ << ", "
+	//	<< bvX << ", "   << bvZ << ", "
+	//	<< hvX << ", "   << hvZ << ", "
+	//	<< cvX << ", "   << cvZ << ", "
+	//	<< hhvX << ", "  << hhvZ << ", "
+	//	<< hcvX << ", "  << hcvZ << ", "
+	//	<< kdN*(hvX-hhvX) << ", "   <<kdN*(hvZ-hhvZ) << ", "<<endl;
+
+
+	return Point(bpX, bpY, bpZ);
+}
+
+
+/*
 Vector calcBallPos(vector<float> cip_pos)
 {
 
@@ -3357,7 +3572,7 @@ Vector calcBallPos(vector<float> cip_pos)
 	bvZ = 0;
 	}*/
 //ONUR
-
+/*
 	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
 	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
 
@@ -3380,7 +3595,7 @@ Vector calcBallPos(vector<float> cip_pos)
 	//cout << setw(10) << bpX << setw(10) << bpY << setw(10) << bpZ << '\n';
 	return Point(bpX, bpY, bpZ);
 }
-
+*/
 
 void setforces(int r11, int r22, int r33, int r44, int forcetypes)
 {

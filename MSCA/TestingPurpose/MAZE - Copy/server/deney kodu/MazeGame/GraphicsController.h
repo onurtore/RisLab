@@ -7,7 +7,7 @@
 #include "force_vector.h"
 #include "spring.h"
 #include "pathCube.h"
-
+#include "rotationCube.h"
 class GraphicsController
 {
 public:	
@@ -17,6 +17,9 @@ public:
 	BallGr *ballGr2;
 	pathCube *mypathCube;
 	pathCube *mypathCube2;
+	//Onur Momentum
+	rotationCube *myRotationCube;
+	rotationCube *myRotationCube2;
 	Wall *wall1;
 	Wall *wall2;
 	Wall *wall3;
@@ -64,6 +67,8 @@ public:
 	void addBall(double x, double y);
 	void addPathCube();
 	void addPathCube(float x,float z);
+	void addRotationCube();//pos value hardcoded
+	
 
 	void changePathCubePos(float x,float z);
 	//Onur

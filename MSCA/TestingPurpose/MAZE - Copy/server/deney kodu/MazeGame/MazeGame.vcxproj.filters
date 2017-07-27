@@ -73,6 +73,9 @@
     <ClCompile Include="pathCube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rotationCube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h">
@@ -142,6 +145,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pathCube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rotationCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

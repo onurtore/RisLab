@@ -4,7 +4,7 @@
 #include "Public.h"
 #include "force_vector.h"
 #include "spring.h"
-
+#include "rotationCube.h"
 GraphicsController::GraphicsController(int scenario, int cond)
 {
 	root1 = new SoSeparator();
@@ -35,7 +35,8 @@ GraphicsController::GraphicsController(int scenario, int cond)
 	wall2 = new Wall(wallHeight, wallWidth23, wallDepth23 ,wallTx2,wallTy,wallTz2);
 	wall3 = new Wall(wallHeight, wallWidth23, wallDepth23 ,wallTx3,wallTy,wallTz3);
 	addPathCube();
-
+	//Onur
+	addRotationCube();
 }
 
 SoSeparator* GraphicsController::getRoot1()
@@ -66,11 +67,13 @@ void GraphicsController::addBall(double x , double z) {
 
 }
 
+
 void GraphicsController::addPathCube(){
 	
 	mypathCube = new pathCube(root1, Point(0, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 50,50));
 	mypathCube2 = new pathCube(root2, Point(0, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 50,50));
 }
+
 
 
 void GraphicsController::addPathCube(float x,float z){
@@ -79,6 +82,12 @@ void GraphicsController::addPathCube(float x,float z){
 	mypathCube2 = new pathCube(root2, Point(x, 0.8f, z), 2.0f, 3.0f, 5, 5, 5, Vector(100, 100,100));
 }
 
+
+void GraphicsController::addRotationCube(){
+
+	myRotationCube = new rotationCube(root1, Point(-15, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 140,80));
+	myRotationCube2 = new rotationCube(root2, Point(-15, 0.8f, 0), 2.0f, 3.0f, 5, 5, 5, Vector(50, 140,80));
+}
 
 void GraphicsController::changePathCubePos(float x,float z){
 

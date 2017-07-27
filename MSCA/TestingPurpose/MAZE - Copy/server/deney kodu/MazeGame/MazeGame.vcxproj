@@ -27,7 +27,7 @@
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>true</CLRSupport>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -65,7 +65,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(COINDIR)\include;$(3DTOUCH_BASE)\include;$(3DTOUCH_BASE)\utilities\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(COINDIR)\include;$(OH_SDK_BASE)\include;$(OH_SDK_BASE)\utilities\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;SOWIN_DLL;COIN_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -83,10 +83,10 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>hd.lib;hdud.lib;coin3.lib;sowin1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>hd.lib;hdu.lib;coin4.lib;sowin1.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\$(Configuration)/$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(COINDIR)\lib;$(3DTOUCH_BASE)\lib;$(3DTOUCH_BASE)\utilities\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COINDIR)\lib;"C:\OpenHaptics\Developer\3.4.0\lib\Win32\Debug";"C:\OpenHaptics\Developer\3.4.0\utilities\lib\Win32\Debug";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -174,6 +174,7 @@
     <ClCompile Include="HapticInterfacePoint.cpp" />
     <ClCompile Include="HIPgraphics.cpp" />
     <ClCompile Include="pathCube.cpp" />
+    <ClCompile Include="rotationCube.cpp" />
     <ClCompile Include="Spring.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="..\DataTransferSocket\Network\NetworkServices.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="pathCube.h" />
     <ClInclude Include="Public.h" />
     <ClInclude Include="Public2.h" />
+    <ClInclude Include="rotationCube.h" />
     <ClInclude Include="SoundPlayerThread.h" />
     <ClInclude Include="Spring.h" />
     <ClInclude Include="Wall.h" />
@@ -205,6 +207,13 @@
     <ClInclude Include="..\DataTransferSocket\Server\ServerApp.h" />
     <ClInclude Include="..\DataTransferSocket\Server\ServerNetwork.h" />
     <ClInclude Include="wheretoGo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

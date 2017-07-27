@@ -559,9 +559,14 @@ vector<double> wheretoGo::calculateForce(double res_x, double res_y, double res_
 	
 	}
 
+	
+	vector<double> naber ;
+	naber.push_back(0);
+	//Bu fonksiyon zaten çalýþmamasý gerekiyor onun için bunu error almamak için yaptým
 
 
-
+	cout << "CALISMAMASÝ GEREKEN FONKSIYON CALISTI\n";
+	return naber;
 }
 
 
