@@ -11,7 +11,6 @@ Ball::Ball()
 	angle  = 0.0f;
 	angVel = 0.0f;
 	angAcc = 0.0f;
-	
 	radius = 1;
 	width = BALL_WIDTH;
 	height = BALL_HEIGHT;
@@ -233,11 +232,17 @@ float Ball::calculateAngleVel(Vector f1,Vector f2)
 }
 
 void Ball::calculateAngle(Vector f1,Vector f2)
-{
+{	
+
 	float angleV = Ball::calculateAngleVel(f1,f2);
 	angle = angle + (DELTA_T * angleV) + calculateAngleAcc(f1,f2) * 0.5 * pow(DELTA_T, 2);
 	angle = fmod(angle, (2*PI));
 }
+
+
+
+
+
 
 
 float Ball::getAngle()

@@ -657,40 +657,59 @@ Callback for haptic loop.
 HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 {
 	float rotationCubeAngle = graphCtrller->myRotationCube->getAngleBallGr();
+	static float angle_rca = 0;
+	static float angle_ca = 0;
 	float cubeAngle = graphCtrller->ballGr->getAngleBallGr();
 	static Vector RotonurForce;
-	static bool getInto = false;
-	if(cubeAngle == rotationCubeAngle ) {
+
+	//radian to degree conversion
+	angle_rca = ( rotationCubeAngle * 180  ) / PI;  
+	angle_ca  = ( cubeAngle * 180 ) / PI;
+
+	if(onurRUNS %500 == 0 ){
+
+		cout << "Donen kubun acisi : " << angle_rca << " Bizim cube : " << angle_ca << '\n';
+	}
+
+	/*Get new angle for rotation cube
+	*/
+	if(abs(angle_rca - angle_ca) < 10 /*Threshold angle*/  ) { 
 		RotonurForce[0] = 0;
 		RotonurForce[2] = 0;
-		cout << "Enter a new value for rotation of rotationCube(between 0-6.30 civari)\n";
+		cout << "Enter a new value for rotation of rotationCube(0-360)\n";
 		cin >> rotationCubeAngle;
+		//Degree to radian conversion
+		rotationCubeAngle = (rotationCubeAngle * PI ) / 180;
+		
+		//If any exceed happens
+		rotationCubeAngle = fmod(rotationCubeAngle,(2*PI));
+
 		graphCtrller->myRotationCube->setAngleBallGr(rotationCubeAngle);
 		
 	}
 
-	if( cubeAngle != rotationCubeAngle) {
+	if( abs(angle_rca - angle_ca) > 10 /*Threshold angle*/ ) {
 
-		getInto = false;
 
-		float angle_vel =  ( rotationCubeAngle - cubeAngle )  / 1000;
-		float angle_acc =  ( angle_vel);
+
+		float angle_vel =  ( angle_rca - angle_ca )  / 1000;
+		float angle_acc =  ( angle_vel) / 1000;
 
 		float inertia = graphCtrller->ballGr->ball->calculateInertia();
 		float onur_moment = inertia * angle_acc;
 
-		if(cubeAngle == 0){
-			cubeAngle = 0.001;
+		if(angle_ca == 0){
+			angle_ca = 0.001;
 		}
-		RotonurForce[0] =  (onur_moment) / (sin(cubeAngle) * BALL_WIDTH * 0.5 ) * 100 ;
-		RotonurForce[2] =  (onur_moment) / (cos(cubeAngle) * BALL_WIDTH * 0.5) * 100;
+		RotonurForce[0] =  (onur_moment) / (sin(angle_ca) * BALL_WIDTH * 0.5) * 10000000;
+		RotonurForce[2] =  (onur_moment) / (cos(angle_ca) * BALL_WIDTH * 0.5)*  10000000;
 		
 	}
-
-
+	string angle_to_force = ConvertO(RotonurForce[0]) + '\t' + ConvertO(RotonurForce[2]) + '\t' + ConvertO(angle_rca) + '\t' + ConvertO(angle_ca) + '\n';
+	writeToFile("angle_to_force.txt",angle_to_force);
 	
 
-vector<float> cipPos;
+	vector<float> cipPos;
 	//onur
 	static bool enter =  false;
 
