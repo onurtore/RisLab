@@ -127,7 +127,8 @@ Ball* BallGr::getBall()
 }
 
 void BallGr::calculateAngleBallGr(Vector f1,Vector f2)
-{    
+{   
+
 	ball->calculateAngle(f1,f2);
 
 	//return fmod(bangle, (2*PI));

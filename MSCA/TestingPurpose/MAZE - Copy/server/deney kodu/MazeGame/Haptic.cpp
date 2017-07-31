@@ -651,62 +651,78 @@ HDCallbackCode HDCALLBACK QueryMotorTemp(void *pUserData)
 	return HD_CALLBACK_DONE;
 }
 
+
+float RadToDegree(float rad){
+
+	return rad * 180 / PI;
+
+}
+
+float DegreeToRad(float degree){
+		
+	return (degree * PI ) / 180;
+}
+
+
 /*******************************************************************************
 Callback for haptic loop.
 *******************************************************************************/
 HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 {
-	float rotationCubeAngle = graphCtrller->myRotationCube->getAngleBallGr();
-	static float angle_rca = 0;
-	static float angle_ca = 0;
-	float cubeAngle = graphCtrller->ballGr->getAngleBallGr();
+	static float angle_game_cube            = 0;
+	static float angle_rotation_cube        = 0;
+	static float vel_game_cube              = 0;
+	static float degree_angle_game_cube     = 0;
+	static float degree_angle_rotation_cube = 0;
+
+	angle_rotation_cube = graphCtrller->myRotationCube->getAngleBallGr();
+	angle_game_cube = graphCtrller->ballGr->getAngleBallGr();
+	vel_game_cube = graphCtrller->ballGr-> getAngVelocity();
+	
 	static Vector RotonurForce;
 
-	//radian to degree conversion
-	angle_rca = ( rotationCubeAngle * 180  ) / PI;  
-	angle_ca  = ( cubeAngle * 180 ) / PI;
+	static bool RotationFirstTime = true;
+
+	degree_angle_game_cube     = RadToDegree(angle_game_cube);
+	degree_angle_rotation_cube = RadToDegree(angle_rotation_cube);
+
 
 	if(onurRUNS %500 == 0 ){
 
-		cout << "Donen kubun acisi : " << angle_rca << " Bizim cube : " << angle_ca << '\n';
+		cout << "Donen kubun acisi : " << degree_angle_rotation_cube << " Bizim cube : " << degree_angle_game_cube << '\n';
 	}
-
-	/*Get new angle for rotation cube
-	*/
-	if(abs(angle_rca - angle_ca) < 10 /*Threshold angle*/  ) { 
+	if(abs(degree_angle_rotation_cube - degree_angle_game_cube) < 4 && (onurRUNS %5000 ==  0 ) /*Threshold angle*/  ) { 
+		RotationFirstTime = false;
 		RotonurForce[0] = 0;
 		RotonurForce[2] = 0;
 		cout << "Enter a new value for rotation of rotationCube(0-360)\n";
-		cin >> rotationCubeAngle;
-		//Degree to radian conversion
-		rotationCubeAngle = (rotationCubeAngle * PI ) / 180;
+		cin >> degree_angle_rotation_cube;
+		angle_rotation_cube = DegreeToRad(degree_angle_rotation_cube); 
 		
 		//If any exceed happens
-		rotationCubeAngle = fmod(rotationCubeAngle,(2*PI));
+		angle_rotation_cube = fmod(angle_rotation_cube,(2*PI));//Actually its should be unneccsarry
 
-		graphCtrller->myRotationCube->setAngleBallGr(rotationCubeAngle);
+		graphCtrller->myRotationCube->setAngleBallGr(angle_rotation_cube);
 		
 	}
 
-	if( abs(angle_rca - angle_ca) > 10 /*Threshold angle*/ ) {
+//	if( abs(degree_angle_rotation_cube - degree_angle_game_cube) > 1 /*Threshold angle*/ ) {
 
+		float acc_game_cube = (  ( ( (angle_rotation_cube - angle_game_cube) * DELTA_T ) - ( vel_game_cube * DELTA_T ) ) * 2 ) / pow(DELTA_T,2);
+		
+		float inertia_game_cube = graphCtrller->ballGr->ball->calculateInertia();
+		float moment_game_cube = inertia_game_cube * acc_game_cube;
 
-
-		float angle_vel =  ( angle_rca - angle_ca )  / 1000;
-		float angle_acc =  ( angle_vel) / 1000;
-
-		float inertia = graphCtrller->ballGr->ball->calculateInertia();
-		float onur_moment = inertia * angle_acc;
-
-		if(angle_ca == 0){
-			angle_ca = 0.001;
+		if(angle_game_cube == 0){
+			angle_game_cube = 0.001;
 		}
-		RotonurForce[0] =  (onur_moment) / (sin(angle_ca) * BALL_WIDTH * 0.5) * 10000000;
-		RotonurForce[2] =  (onur_moment) / (cos(angle_ca) * BALL_WIDTH * 0.5)*  10000000;
+		RotonurForce[0] =  -(moment_game_cube) / (sin(angle_game_cube) * BALL_WIDTH * 0.5) /1000 ;
+		RotonurForce[1] =  0;
+		RotonurForce[2] =  -(moment_game_cube) / (cos(angle_game_cube) * BALL_WIDTH * 0.5)/ 1000;
 		
-	}
-	string angle_to_force = ConvertO(RotonurForce[0]) + '\t' + ConvertO(RotonurForce[2]) + '\t' + ConvertO(angle_rca) + '\t' + ConvertO(angle_ca) + '\n';
-	writeToFile("angle_to_force.txt",angle_to_force);
+	//}
+	string angle_to_force = ConvertO(RotonurForce[0]) + '\t' + ConvertO(RotonurForce[2]) + '\t' + ConvertO(angle_rotation_cube - angle_game_cube) + '\n';
+	writeToFile("0angle_to_force.txt",angle_to_force);
 	
 
 	vector<float> cipPos;
@@ -2246,7 +2262,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 				force1[0] = 0;
 				force1[2] = 0;
 				force1[1] = 0;
-				graphCtrller->ballGr->calculateAngleBallGr(RotonurForce,force1);//OnurMoment block angular movement 
+				graphCtrller->ballGr->calculateAngleBallGr(force1,RotonurForce);//OnurMoment block angular movement 
 			}
 			//else
 			//{

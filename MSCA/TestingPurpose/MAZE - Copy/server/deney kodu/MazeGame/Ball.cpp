@@ -195,7 +195,7 @@ float Ball::calculateMoment(Vector f1,Vector f2)
 	
 	Mom = ( f1[2]*BALL_WIDTH*0.5*cos(angle)+f1[0]*BALL_WIDTH*0.5*sin(angle)) +
 		  (-f2[2]*BALL_WIDTH*0.5*cos(angle)-f2[0]*BALL_WIDTH*0.5*sin(angle));
-	float MomResistance=0.0f;
+	float MomResistance=0.0f; 
 
 	// apply rotational friction
 	 if(abs(angVel)== 0.0f)
