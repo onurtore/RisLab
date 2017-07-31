@@ -34,16 +34,17 @@ float b_calculateAngleVel(float b_force[3]);
 float b_calculateAngleAcc(float b_force[3]);
 float b_calculateMoment(float b_force[3]);
 float b_calculateInertia();
+float RadToDegree(float rad);
+float DegreeToRad(float degree);
 
 float a_angle     = 0;
 
 
-
-float b_angle     = 0;
-float b_angle_vel = 0;
-float b_angle_acc = 0;
-float b_inertia   = b_calculateInertia();
-float b_moment    = 0;
+float b_angle         = 0;
+float b_angle_vel     = 0;
+float b_angle_acc     = 0;
+float b_inertia       = b_calculateInertia();
+float b_moment        = 0;
 
 void writeTofile(string filename,string output){
 
@@ -57,29 +58,47 @@ void writeTofile(string filename,string output){
 }
 
 
+float RadToDegree(float rad){
+
+    return rad * 180 / PI;
+
+}
+float DegreeToRad(float degree){
+
+    return  ( degree * PI ) / 180;
+}
+
 int main(){
+
+
     cout << "Enter first cube angle : (With degree 0-360)";
     cin >> a_angle;
-
+    a_angle = DegreeToRad(a_angle);
     cout <<"Enter second cube angle : (With degree 0-360)";
     cin >> b_angle;
+    b_angle = DegreeToRad(b_angle);
 
-    old_counter = b_angle;
-    new_counter = b_angle;
+    old_counter = RadToDegree(b_angle);
+    new_counter = RadToDegree(b_angle);
 
-    while( 1/*abs(a_angle - b_angle) > 10 Threshold*/ )
+    while( 1/*abs(a_angle - b_angle) > 0.5 Threshold*/ )
     {
         counter++;
-        //string output = to_string(b_angle);
-        new_counter =  b_angle;
-        
+        new_counter =  RadToDegree(b_angle);
+
         if(abs ( new_counter - old_counter) > 1){
             old_counter = new_counter;
-            cout << counter << '\t' << b_angle << '\n' ;
+            cout << counter << '\t' << RadToDegree(b_angle) << '\n' ;
         }
 
-        float cal_b_angle_vel = (a_angle - b_angle ) / 1000;
-        float cal_b_angle_acc = cal_b_angle_vel / 1000;
+
+        //I think its not the right way but its good with the experimental
+        float cal_b_angle_acc =( ( ( (a_angle - b_angle) * DELTA_T) - (b_angle_vel * DELTA_T) ) * 2 ) / pow(DELTA_T,2);
+
+    //   float cal_b_angle_vel = (a_angle - b_angle ) / 1000;
+     // float cal_b_angle_acc = cal_b_angle_vel / 1000;
+
+
         float cal_b_moment    = b_inertia * cal_b_angle_acc;
 
         if(b_angle == 0){
@@ -88,25 +107,31 @@ int main(){
 
         float b_force[3] = {0};
 
-        b_force[0] = ( (cal_b_moment) / sin(b_angle) * BALL_WIDTH * 0.5);
+        b_force[0] = -( (cal_b_moment) / sin(b_angle) * BALL_WIDTH * 0.5);
         b_force[1] = 0;
-        b_force[2] = ( (cal_b_moment) / cos(b_angle) * BALL_WIDTH * 0.5);
-        
-        b_force[0] *= 600;
-        b_force[1] *= 600;
-        b_force[2] *= 600;
+        b_force[2] = -( (cal_b_moment) / cos(b_angle) * BALL_WIDTH * 0.5);
 
-       // output += '\t' +  to_string(b_force[0]) + '\t' + to_string(b_force[2]);
-        
+        b_force[0] /= 1000;
+        b_force[1] /= 1000;
+        b_force[2] /= 1000;
+
+      //  b_force[0] *= 1000;
+       // b_force[1] *= 1000;
+       // b_force[2] *= 1000;
+
+
+
+
         b_calculate_angle(b_force);
-        
-        //output += '\t' + to_string(b_angle) + '\n';
-        //writeTofile("cool_rotation.txt",output);//CPU Consuming
+
+
+
+
     }
 }
 
-
 float b_calculateInertia(){
+
 
     float width = BALL_WIDTH; //Get from haptic board game
     float depth = BALL_DEPTH;
@@ -121,7 +146,7 @@ void b_calculate_angle(float b_force[3]){
 
     float angleV = b_calculateAngleVel(b_force);
     b_angle = b_angle + (DELTA_T * angleV) + b_calculateAngleAcc(b_force) *0.5 * pow(DELTA_T,2);
-
+    b_angle = fmod(b_angle, (2* PI));
 }
 
 
@@ -129,6 +154,7 @@ float b_calculateAngleVel(float b_force[3]){
 
 
     b_angle_vel = b_angle_vel + (DELTA_T * (b_calculateAngleAcc(b_force)));
+    b_angle_vel = fmod(b_angle_vel,(2*PI));
     return b_angle_vel;
 
 }
@@ -137,6 +163,7 @@ float b_calculateAngleVel(float b_force[3]){
 float b_calculateAngleAcc(float b_force[3]){
 
     b_angle_acc = b_calculateMoment(b_force) / b_inertia;
+    b_angle_acc = fmod(b_angle_acc,(2*PI));
     return b_angle_acc;
 }
 
@@ -145,17 +172,17 @@ float b_calculateMoment(float b_force[3]){
     //Tork = moment 
     float tork = 0;
     float tork_resistance = 0;
-    tork = b_force[2] * BALL_WIDTH * 0.5 * cos(b_angle) + b_force[0] * BALL_WIDTH * 0.5 * sin(b_angle);
+    tork = -b_force[2] * BALL_WIDTH * 0.5 * cos(b_angle) -b_force[0] * BALL_WIDTH * 0.5 * sin(b_angle);
 
     //Rotational friction
     if(abs(b_angle_vel) == 0.0f){
         tork_resistance = b_inertia * COEFFICIENT_FRICTION_ROT_STATIC * SSIGN(tork);
         tork -= tork_resistance;
     }
-    
+
     else if (abs(b_angle_vel) > 0.0f){
         tork_resistance = b_inertia * COEFFICIENT_FRICTION_ROT * SSIGN(b_angle_vel);
-        
+
         tork -= tork_resistance;
     }
 
