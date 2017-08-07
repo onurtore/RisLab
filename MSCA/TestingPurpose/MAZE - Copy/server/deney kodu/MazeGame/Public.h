@@ -190,7 +190,7 @@ const float BOARD_THC			= 2.0f;
 
 #ifdef STATIC_FRICTION_ON
 const float COEFFICIENT_FRICTION_STATIC          = 0.19f;
-const float COEFFICIENT_FRICTION_KINETIC	     = 0.15f/*Onur0.15f*/;
+const float COEFFICIENT_FRICTION_KINETIC	     = 0.50f/*Onur0.15f*/;
 const float COEFFICIENT_FRICTION_ROT_STATIC      = 0.20f;
 const float COEFFICIENT_FRICTION_ROT             = 0.19f;
 #else
@@ -199,7 +199,7 @@ const float COEFFICIENT_FRICTION_ROT      = 0.0f;
 #endif
 #define DYNAMIC_FRICTION_ON
 #ifdef DYNAMIC_FRICTION_ON
-const float COEFFICIENT_FRICTION_DYNAMIC  = 2.0f;
+const float COEFFICIENT_FRICTION_DYNAMIC  = 2.0f;/*Onur2.0f;*/
 #else
 const float COEFFICIENT_FRICTION_DYNAMIC  = 0.0f;
 #endif

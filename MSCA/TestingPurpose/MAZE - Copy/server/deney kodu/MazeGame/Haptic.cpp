@@ -212,7 +212,7 @@ float kdN = 0.005f;//0.001
 #else
 //Force on Ball
 float kpHN = 0.6f;
-float kpCN = 0.6f;
+float kpCN = 0.3f;/*0.6f*/
 float kdN = 0.001f;
 #endif
 
@@ -260,8 +260,8 @@ Vector calculateFriction();
 
 //Onur Bu fonksiyonun i�eri�ini de�i�tirdim
 //Vector calcBallPos();
-//Vector calcBallPos(vector<float> cip_pos);
-Vector calcBallPos(); // Cismi hareket ettirmemesi için tasarlandi.//OnurMoment
+Vector calcBallPos(vector<float> cip_pos);
+//Vector calcBallPos(); // Cismi hareket ettirmemesi için tasarlandi.//OnurMoment
 // find the closest wall
 Vector collX(Vector ball);
 
@@ -668,61 +668,91 @@ float DegreeToRad(float degree){
 Callback for haptic loop.
 *******************************************************************************/
 HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
-{
-	static float angle_game_cube            = 0;
-	static float angle_rotation_cube        = 0;
-	static float vel_game_cube              = 0;
-	static float degree_angle_game_cube     = 0;
-	static float degree_angle_rotation_cube = 0;
+{	
 
-	angle_rotation_cube = graphCtrller->myRotationCube->getAngleBallGr();
-	angle_game_cube = graphCtrller->ballGr->getAngleBallGr();
-	vel_game_cube = graphCtrller->ballGr-> getAngVelocity();
+	//This part of code used for show rotation Not neccesary anymore
+//	static float angle_game_cube            = 0;
+//	static float angle_rotation_cube        = 0;
+//	static float vel_game_cube              = 0;
+//	static float degree_angle_game_cube     = 0;
+//	static float degree_angle_rotation_cube = 0;
+
+//	angle_rotation_cube = graphCtrller->myRotationCube->getAngleBallGr();
+//	angle_game_cube = graphCtrller->ballGr->getAngleBallGr();
+//	vel_game_cube = graphCtrller->ballGr-> getAngVelocity();
 	
-	static Vector RotonurForce;
+//	static Vector RotonurForce;
 
-	static bool RotationFirstTime = true;
+//	static bool RotationFirstTime = true;
 
-	degree_angle_game_cube     = RadToDegree(angle_game_cube);
-	degree_angle_rotation_cube = RadToDegree(angle_rotation_cube);
+//	degree_angle_game_cube     = RadToDegree(angle_game_cube);
+//	degree_angle_rotation_cube = RadToDegree(angle_rotation_cube);
 
 
-	if(onurRUNS %500 == 0 ){
+//	if(onurRUNS %500 == 0 ){
 
-		cout << "Donen kubun acisi : " << degree_angle_rotation_cube << " Bizim cube : " << degree_angle_game_cube << '\n';
-	}
-	if(abs(degree_angle_rotation_cube - degree_angle_game_cube) < 4 && (onurRUNS %5000 ==  0 ) /*Threshold angle*/  ) { 
-		RotationFirstTime = false;
-		RotonurForce[0] = 0;
-		RotonurForce[2] = 0;
-		cout << "Enter a new value for rotation of rotationCube(0-360)\n";
-		cin >> degree_angle_rotation_cube;
-		angle_rotation_cube = DegreeToRad(degree_angle_rotation_cube); 
+//		cout << "Donen kubun acisi : " << degree_angle_rotation_cube << " Bizim cube : " << degree_angle_game_cube << '\n';
+//	}
+//	if(abs(degree_angle_rotation_cube - degree_angle_game_cube) < 4 && (onurRUNS %5000 ==  0 ) /*Threshold angle*/  ) { 
+//		RotationFirstTime = false;
+//		RotonurForce[0] = 0;
+//		RotonurForce[2] = 0;
+//		cout << "Enter a new value for rotation of rotationCube(0-360)\n";
+//		cin >> degree_angle_rotation_cube;
+//		angle_rotation_cube = DegreeToRad(degree_angle_rotation_cube); 
 		
 		//If any exceed happens
-		angle_rotation_cube = fmod(angle_rotation_cube,(2*PI));//Actually its should be unneccsarry
+//		angle_rotation_cube = fmod(angle_rotation_cube,(2*PI));//Actually its should be unneccsarry
 
-		graphCtrller->myRotationCube->setAngleBallGr(angle_rotation_cube);
+//		graphCtrller->myRotationCube->setAngleBallGr(angle_rotation_cube);
 		
-	}
+//	}
 
-//	if( abs(degree_angle_rotation_cube - degree_angle_game_cube) > 1 /*Threshold angle*/ ) {
+////	if( abs(degree_angle_rotation_cube - degree_angle_game_cube) > 1 /*Threshold angle*/ ) {
 
-		float acc_game_cube = (  ( ( (angle_rotation_cube - angle_game_cube) * DELTA_T ) - ( vel_game_cube * DELTA_T ) ) * 2 ) / pow(DELTA_T,2);
+//		float acc_game_cube = (  ( ( (angle_rotation_cube - angle_game_cube) * DELTA_T ) - ( vel_game_cube * DELTA_T ) ) * 2 ) / pow(DELTA_T,2);
 		
-		float inertia_game_cube = graphCtrller->ballGr->ball->calculateInertia();
-		float moment_game_cube = inertia_game_cube * acc_game_cube;
+//		float inertia_game_cube = graphCtrller->ballGr->ball->calculateInertia();
+//		float moment_game_cube = inertia_game_cube * acc_game_cube;
 
-		if(angle_game_cube == 0){
-			angle_game_cube = 0.001;
-		}
-		RotonurForce[0] =  -(moment_game_cube) / (sin(angle_game_cube) * BALL_WIDTH * 0.5) /1000 ;
-		RotonurForce[1] =  0;
-		RotonurForce[2] =  -(moment_game_cube) / (cos(angle_game_cube) * BALL_WIDTH * 0.5)/ 1000;
+//		if(angle_game_cube == 0){
+//			angle_game_cube = 0.001;
+//		}
+//		RotonurForce[0] =  -(moment_game_cube) / (sin(angle_game_cube) * BALL_WIDTH * 0.5) /1000 ;
+//		RotonurForce[1] =  0;
+//		RotonurForce[2] =  -(moment_game_cube) / (cos(angle_game_cube) * BALL_WIDTH * 0.5)/ 1000;
 		
-	//}
-	string angle_to_force = ConvertO(RotonurForce[0]) + '\t' + ConvertO(RotonurForce[2]) + '\t' + ConvertO(angle_rotation_cube - angle_game_cube) + '\n';
-	writeToFile("0angle_to_force.txt",angle_to_force);
+//	//}
+	
+	
+	
+	
+
+//	static float angle_game_cube            = 0;
+//	static float angle_rotation_cube        = 0;
+//	static float vel_game_cube              = 0;
+//	static float degree_angle_game_cube     = 0;
+//	static float degree_angle_rotation_cube = 0;
+	
+//	angle_rotation_cube = DegreeToRad(90);
+//	graphCtrller->myRotationCube->setAngleBallGr(angle_rotation_cube);
+//	angle_game_cube = graphCtrller->ballGr->getAngleBallGr();
+//	vel_game_cube = graphCtrller->ballGr-> getAngVelocity();
+//	static Vector RotonurForce;
+
+//	float acc_game_cube = (  ( ( (angle_rotation_cube - angle_game_cube) * DELTA_T ) - ( vel_game_cube * DELTA_T ) ) * 2 ) / pow(DELTA_T,2);
+//	float inertia_game_cube = graphCtrller->ballGr->ball->calculateInertia();
+//	float moment_game_cube = inertia_game_cube * acc_game_cube;
+
+//	if(angle_game_cube == 0){
+//		angle_game_cube = 0.001;
+//	}
+
+//	RotonurForce[0] =  (moment_game_cube) / (sin(angle_game_cube) * BALL_WIDTH * 0.5) /1000 ;
+//	RotonurForce[1] =  0;
+//	RotonurForce[2] =  (moment_game_cube) / (cos(angle_game_cube) * BALL_WIDTH * 0.5)/ 1000;
+
+	
 	
 
 	vector<float> cipPos;
@@ -904,7 +934,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	//graphCtrller->hip.setVelocity( Point(hvX,hvY,hvZ));
 	//graphCtrller->cip.setVelocity( Point(cvX,cvY,cvZ));
 		static float algorithm_force_x      = 0;
-	static float algorithm_force_z      = 0;
+		static float algorithm_force_z      = 0;
 
 
 	//Onur -> Calculate the force for the drag the  cube (ball), to the neareast point, on the path
@@ -937,103 +967,12 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		graphCtrller->hip.getVelocity().getValue(hvX, hvY, hvZ);
 		graphCtrller->handleH.getVelocity().getValue(hhvX, hhvY, hhvZ);
 
-		
-	
-		if(bpX == 0 && bpY == 0 && bpZ == 0  && isWarning == false){
-			//cout << "Warning: ball position data is zero\n";
-			isWarning = true;
-			
-		}
 
-		if(bvX == 0 && bvY == 0 && bvZ == 0 && isWarning == false ){
-			//cout << "Warning: ball velocity data is zero\n";
-			isWarning = true;
-		
-		}
 
 		//Calculate look ahead position
 		look_ahead_x = bpX + (t_look_ahead * bvX);
 		look_ahead_z = bpZ + (t_look_ahead * bvZ); 
 
-		if(look_ahead_x == 0 && look_ahead_z == 0 && isWarning == false){
-
-			cout << "Warning: look ahead position is zero\n";
-			isWarning = true;
-			
-		}
-
-
-		//Calculate reference position
-		//Closest point on the path, for the given point
-
-
-
-		//Friendly Reminder
-		/*
-		//Transformation of coordinate system from Haptic to onur code 
-			float HOXsrc_min = -100;	//MazeGame x axis min left-right
-			float HOXsrc_max = +100;	//MazeGame x axis max left-right
-			float HOZsrc_min = -41;	//MazeGame z axis min up-down
-			float HOZsrc_max = +41;	//MazeGame z axis max up-down
-
-			float HOXres_min = 0;	//Onur Code x axis min up-down
-			float HOXres_max = +82;  //Onur Code x axis max up-down
-			float HOYres_min = 0;	//Onur Code y axis min left-right
-			float HOYres_max = 200; //Onur Code y  axis max left-right
-
-			//Transformation of coordinate system from onur code  to haptic  
-		
-			float OHXsrc_max = 82;	//Onur Code x axis max up-down 
-			float OHXsrc_min = 0;	//Onur Code x axis min up-down
-			float OHYsrc_max = 200;	//Onur Code y axis max left-right
-			float OHYsrc_min = 0;	//Onur Code y axis min left-right
-
-			float OHXres_min = -100; //MazeGame x axis min left-right 
-			float OHXres_max = +100; //MazeGame x axis max left-right
-			float OHZres_min = -41;	//MazeGame z axis min up-down
-			float OHZres_max = +41;	//MazeGame z axis max up-down
-		*/
-
-		//Transform Haptic coordinate points of look_ahead position to  Onur Coordinate System points
-		/*
-			//up down transformation
-			res_x = ( look_ahead_x - HOZsrc_min) / (HOZsrc_max -HOZsrc_min) * (HOXres_max - HOXres_min) + HOXres_min;
-			//left right transformation
-			res_y = ( look_ahead_x - HOXsrc_min) / ( HOXsrc_max - HOXsrc_min) * ( HOYres_max - HOYres_min ) + HOYres_min;
-		
-
-		//Calculate closest point to path
-		std::pair<int,int> minRef = closestLinePoint(res_x,res_y);
-
-
-		//points which have minimum distance to the given point, but in the onur coordinate system
-		onur_reference_point_x = std::get<0>(minRef);
-		onur_reference_point_y = std::get<1>(minRef);
-
-		if(onur_reference_point_x == 0 && onur_reference_point_y == 0 && isWarning == false ){
-
-			cout << "Warning : Onur coordinate system reference points are zero \n";
-			isWarning = true;
-
-		}
-
-
-		//translate onur reference points to  haptic coordinate system
-
-			//left right transformation
-			reference_point_x = ((  onur_reference_point_y - OHYsrc_min ) / (OHYsrc_max - OHYsrc_min ) * (OHXres_max - OHXres_min) + OHXres_min);
-			//up down transformation
-			reference_point_z = (( onur_reference_point_x - OHXsrc_min ) / (OHXsrc_max - OHXsrc_min) * (OHZres_max - OHZres_min ) + OHZres_min );
-
-
-		if(reference_point_x == 0 && reference_point_z == 0  && isWarning == false){
-
-			cout << "Warning : Reference Points are zero \n";
-			isWarning = true;
-
-		}
-		*/
-		//Error Check 2
 
 		double ECXsrc_max = 82;	//Onur Code x axis max up-down 
 		double ECXsrc_min = 0;	//Onur Code x axis min up-down
@@ -1057,6 +996,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		double ECGO_x = 0;
 		double ECGO_z = 0;
 		int place_holder = 0;
+
 
 		
 		static int lastTarget = 0;
@@ -1089,7 +1029,6 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		}
 	
 
-
 		if(OnurfirstTime){
 
 			lastTarget = 0;
@@ -1106,20 +1045,101 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			ECGO_z = ECGO_z - (TARGET_WIDTH )*0.5*sin(angle_rot);
 		}
 
+		static float onur_slope;
+		if(lastTarget != 0){
 		
-		//Error Check
+		float before_ECGO_z = ((path.dtargetsX.at(lastTarget-1) - ECXsrc_min) / (ECXsrc_max - ECXsrc_min) * (ECZres_max - ECZres_min) + ECZres_min);
+		float before_ECGO_x = ((path.dtargetsY.at(lastTarget-1) - ECYsrc_min) / (ECYsrc_max - ECYsrc_min) * (ECXres_max - ECXres_min) + ECXres_min);
+		
+
+
+		 float slope_x = ECGO_z - before_ECGO_z;
+		 float slope_z = ECGO_x - before_ECGO_x;
+		onur_slope = slope_z / slope_x;
+		onur_slope = atan(onur_slope);
+		//if(onurRUNS %500 == 0){
+		//	cout << ECGO_z << '\t' << before_ECGO_z << '\t' << ECGO_x << '\t' << before_ECGO_x << '\n';
+		//	cout << onur_slope << '\n';
+		//}
+
+
+
+		}
+		else{
+			
+			cout << "Slope is: " << '0' << '\n';
+		}
+		 
+		if(lastTarget > (path.dtargetsX.size() - 10 )){
+			cout << "hello\n";
+			onur_slope =  0;
+		}
+		cout << onur_slope << '\n';
+	 float angle_game_cube            = 0;
+	 float angle_rotation_cube        = 0;
+	 float vel_game_cube              = 0;
+	 float degree_angle_game_cube     = 0;
+	 float degree_angle_rotation_cube = 0;
+	
+	angle_rotation_cube = onur_slope;
+	graphCtrller->myRotationCube->setAngleBallGr(onur_slope);
+	angle_game_cube = graphCtrller->ballGr->getAngleBallGr();
+	vel_game_cube = graphCtrller->ballGr-> getAngVelocity();
+	 Vector RotonurForce;
+
+	float acc_game_cube = ( ( ( (onur_slope - angle_game_cube) * DELTA_T ) - ( vel_game_cube * DELTA_T ) ) * 2 ) / pow(DELTA_T,2);
+	float inertia_game_cube = graphCtrller->ballGr->ball->calculateInertia();
+	float moment_game_cube = inertia_game_cube * acc_game_cube;
+
+	if(angle_game_cube == 0){
+		angle_game_cube = 0.001;
+	}
+
+	RotonurForce[0] =  (moment_game_cube) / (sin(angle_game_cube) * BALL_WIDTH * 0.5) /1000 ;
+	RotonurForce[1] =  0;
+	RotonurForce[2] =  (moment_game_cube) / (cos(angle_game_cube) * BALL_WIDTH * 0.5)/ 1000;
+
+	
+
 
 		graphCtrller->mypathCube->setPosition(ECGO_x,ECGO_z);
 		graphCtrller->mypathCube2->setPosition(ECGO_x,ECGO_z);
+		graphCtrller->handleC.getPosition().getValue(hcpX, hcpY, hcpZ);
+
+
 		
 		
-		
-		//Set cip position to the target 
 		cpX = ECGO_x;
 		cpY = 0.8f;
 		cpZ = ECGO_z;
+		
+		//cpX += -(RotonurForce[0] / kpCN ) + hcpX;
+		//cpZ += -(RotonurForce[2] / kpCN ) + hcpZ;
+		
+			graphCtrller->handleH.getPosition().getValue(hhpX, hhpY, hhpZ);
+			graphCtrller->handleC.getPosition().getValue(hcpX, hcpY, hcpZ);
+
+			float o_spring_angle_c, o_spring_dist_c;
+			float o_spring_distX_c = cpX - hcpX;
+			float o_spring_distZ_c = cpZ - hcpZ;
+
+			o_spring_angle_c = atan2(o_spring_distX_c, o_spring_distZ_c);
+			o_spring_dist_c = sqrt(o_spring_distX_c*o_spring_distX_c + o_spring_distZ_c*o_spring_distZ_c);
+
+
+			if (o_spring_dist_c >= MAX_SPRING_DIST)
+			{
+				//cout << "cpX value changed: " << onurRUNS << '\n';
+				cpX = hcpX + MAX_SPRING_DIST * sin(o_spring_angle_c);
+				cpZ = hcpZ + MAX_SPRING_DIST * cos(o_spring_angle_c);
+			}
+		
+
+
 		cipPos.push_back(cpX);
+
 		cipPos.push_back(cpZ);
+		
 
 		//Calculate the points by formula
 		//graphCtrller->mypathCube->transfMat->translation.setValue(reference_point_x,0.8f,reference_point_z);
@@ -1519,9 +1539,23 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			//angle_rot = 
 			//Onur Moment 
 			//Make rotation zero
-			//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
+			//if (((runs > timeToGoInit + wait) && (trialNo == 1)) || (trialNo != 1))
 
 
+			//Bu force döndürmek için çok az.
+			//Sanırsam bu forcelar hapticlere verilmek için scale edilince, cismi döndürmek için yeterli olmuyorlar
+			//aşağılarda iki kere daha calculateAngleBallGr fonksiyonun çağırıldığını göreceksin
+			//onlar forceFB1 ve forceFB2 tekrar hesaplandıktan sonra çalışır hale geliyorlar
+			//Bu şekilde yazılmış kod iyi değil...
+
+			//zaten eğer eğer if ((runs >= 2) && (runs <= timeToGoInit + wait) && (trialNo == 1)) loop koşulu
+			//doğru değilse bu güçler cismi döndürmeye yetmiyor bunu aynı if içine alıyorum 
+			//bir değişikliliğin olmaması gerekiyor
+			
+			if ((runs >= 2) && (runs <= timeToGoInit + wait) && (trialNo == 1)){
+				cout << "inside of it\t: " << onurRUNS << '\n';
+					graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
+			}
 			////CIGIL: check if there is an angular collision
 			////if there is not an angular collision, assign new angle
 			//if(!graphCtrller->ballGr->ball->isAngleCollide())
@@ -1531,8 +1565,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 			//}
 
 		}//if( ( (runs > timeToGoInit+wait) && (trialNo==1) ) || (trialNo!=1) ) bunun biti�i
-		ballPosNext = calcBallPos();
-		//ballPosNext = calcBallPos(cipPos);
+		//ballPosNext = calcBallPos();
+		ballPosNext = calcBallPos(cipPos);
 		//CIGIL
 		// check the angle of the board 
 		angle_rot = graphCtrller->ballGr->getAngleBallGr();
@@ -1605,6 +1639,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 		{
 			if ((dataRec->scenario == ROTATIONAL) && (dataRec->cond == FULL_CONFLICT))
 			{
+				
 				if (boardAngle >= upperLimitAngle)
 				{
 					angle_rot = upperLimitAngle;
@@ -1967,6 +2002,7 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 			if (spring_dist_c >= MAX_SPRING_DIST)
 			{
+				//cout << "cpX value changed: " << onurRUNS << '\n';
 				cpX = hcpX + MAX_SPRING_DIST * sin(spring_angle_c);
 				cpZ = hcpZ + MAX_SPRING_DIST * cos(spring_angle_c);
 			}
@@ -2257,12 +2293,21 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 			
 				//Onur
-				//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);//OnurMoment block angular movement 
+				//Why the  arguments are force2,force1
+
+					
+					//Onur
+					//sanırsam diğer koddan geçirilirken tam olarak doğru geçirilmemiş,orijinal maze gamede
+							//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);
+							//graphCtrller->ballGr2->calculateAngleBallGr(force2, force1);
+				
+					//çünkü diğer oyunda iki tane ball vardı ballGr ve ballGr2 bu oyunda öyle birşey yok, biri geçirirken kontrol etmemiş
+					//sanırım diye düşünüyorum umarım yanılıyorumdur,baştan savma kod yazılmış...
+
+					//Önlem için bir tane calculateAngleBallGr fonksiyonu siliyorum.
+					
 				//graphCtrller->ballGr->calculateAngleBallGr(force2, force1);//OnurMoment block angular movement
-				force1[0] = 0;
-				force1[2] = 0;
-				force1[1] = 0;
-				graphCtrller->ballGr->calculateAngleBallGr(force1,RotonurForce);//OnurMoment block angular movement 
+				graphCtrller->ballGr->calculateAngleBallGr(RotonurForce,force1);//OnurMoment block angular movement 
 			}
 			//else
 			//{
@@ -2284,7 +2329,6 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 
 
 	//Onur Burdan sonrasi feedback uyguluyor.
-
 
 
 	hdMakeCurrentDevice(effect->hHD1);
@@ -2320,8 +2364,8 @@ HDCallbackCode HDCALLBACK MyHapticLoop(void *pUserData)
 	fOnHip_scaled = forceFB1;
 	// send all forces to device
 	//Onur comment feedback for Haptic 1
-	//HDdouble fToD1[3] = { forceFB1[0], forceFB1[1], forceFB1[2] };  //Onur Moment : Make Feedback zero,free haptic
-	HDdouble fToD1[3] = { 0, 0, 0 };
+	HDdouble fToD1[3] = { forceFB1[0], forceFB1[1], forceFB1[2] };  //Onur Moment : Make Feedback zero,free haptic
+	//HDdouble fToD1[3] = { 0, 0, 0 };
 
 
 	effect->PreventWarmMotors(hduVector3Dd(fToD1[0], fToD1[1], fToD1[2]));
@@ -3264,6 +3308,7 @@ Vector calcBallPos()
 */
 
 //OnurMoment
+/*
 Vector calcBallPos()
 {
 	
@@ -3418,7 +3463,7 @@ Vector calcBallPos()
 	bvX = 0;
 	bvZ = 0;
 	}*/
-
+/*
 	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
 	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
 
@@ -3442,8 +3487,8 @@ Vector calcBallPos()
 	return Point(bpX, bpY, bpZ);
 }
 
+*/
 
-/*
 Vector calcBallPos(vector<float> cip_pos)
 {
 
@@ -3516,6 +3561,7 @@ Vector calcBallPos(vector<float> cip_pos)
 	forceBall[0] = kpHN*(hpX-hhpX) + kdN*(hvX-hhvX) 
 	+kpCN*(cpX-hcpX) + kdN*(cvX-hcvX)+fcw[0] + boundaryforceCX;
 	
+
 	forceBall[2] = kpHN*(hpZ-hhpZ) + kdN*(hvZ-hhvZ)
 	+kpCN*(cpZ-hcpZ) + kdN*(cvZ-hcvZ)+fcw[2] + boundaryforceCZ; 
 
@@ -3584,8 +3630,7 @@ Vector calcBallPos(vector<float> cip_pos)
 	}
 
 
-	cout << setw(10) << fFriction[0] << setw(20) << fFriction[2] << '\n'; 
-
+	
 
 	ss += ConvertO(forceBall[0]) + '\t' + ConvertO(forceBall[2]) + '\n';
 	writeToFile("force_friction.txt",ss);
@@ -3613,7 +3658,7 @@ Vector calcBallPos(vector<float> cip_pos)
 	bvZ = 0;
 	}*/
 //ONUR
-/*
+
 	bpX += bvX * DELTA_T + 0.5 * accX * pow(DELTA_T, 2);
 	bpZ += bvZ * DELTA_T + 0.5 * accZ * pow(DELTA_T, 2);
 
@@ -3636,7 +3681,7 @@ Vector calcBallPos(vector<float> cip_pos)
 	//cout << setw(10) << bpX << setw(10) << bpY << setw(10) << bpZ << '\n';
 	return Point(bpX, bpY, bpZ);
 }
-*/
+
 
 void setforces(int r11, int r22, int r33, int r44, int forcetypes)
 {
