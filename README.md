@@ -4,7 +4,7 @@ Integrate  a controller algorithm which uses path finding algorithms to track pr
 
 Pre-existing code uses two haptic device to control rigid body,now one of the haptic devices disabled and uses controller algorithm to move rigid body.
 
-#Getting Started
+# Getting Started
 
 Code has 3 different parts which are: 
 

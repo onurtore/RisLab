@@ -1,5 +1,5 @@
-###MAZE-Copy
-Currently used code
+## MAZE-Copy
+Currently used code<br/>
 
-###WheretoGo_Beta
-Beta code, for dynamic calculation of paths for preexisting targets.
+## WheretoGo_Beta
+Beta code, for dynamic calculation of paths for preexisting targets.<br/>
