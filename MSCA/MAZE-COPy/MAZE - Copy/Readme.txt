@@ -1,1 +1,0 @@
-MazeGame eski oyunlardan bir tanesi.

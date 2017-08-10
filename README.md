@@ -1,13 +1,15 @@
-# RisLab
+# Robotics Laboratory - Controller Project
 
-onurberk_t@hotmail.com<br />
+Integrate  a controller algorithm which uses path finding algorithms to track predefined path.
 
-Cognitive_Science_Project : Ayşe Hocanin Cognitive Science öğrencisiyle yaptigi proje ile alakali kod.<br />
-HBG : Haptic Board Game kodu<br />
-MSCA : Ayse hocanın Onurla yaptigi is<br />
-Original_Maze_Game : Maze Game'in orjinal kodu<br />
-Pictures : pictures for readme.md<br />
+Pre-existing code uses two haptic device to control rigid body,now one of the haptic devices disabled and uses controller algorithm to move rigid body.
 
-Private  Repository for RIS lab project
-+![Screenshot](Pictures/7c6ss6v.jpg)
+#Getting Started
 
+Code has 3 different parts which are: 
+
+1)Calculate the path that rigid body will follow using combination of potantielfield, and wavefront algorithms.
+
+2)Calculate force and torque to stay on the path.
+
+3)Calculate feedback force for haptic devices.
