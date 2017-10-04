@@ -1,6 +1,6 @@
-# Robotics Laboratory - 
+# Robotics Laboratory 
 
-#Explanation
+# Explanation
 
 Testbed application implementati on Marie Sklodowska-Curie actions Co-circulation project.
 
